@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ДОБРО — Мясная мануфактура</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #000; --card: #111; --accent: #FF3B30; --text: #fff; --sec: #8E8E93; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; padding-bottom: 120px; }
+        header { padding: 30px 0; border-bottom: 1px solid #222; margin-bottom: 20px; }
+        .logo { font-weight: 900; font-size: 3rem; letter-spacing: -2px; margin: 0; }
+        .tagline { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 3px; font-weight: 700; }
+        
+        .item { background: var(--card); padding: 16px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid #222; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: 600; font-size: 1rem; display: block; }
+        .item-price { color: var(--sec); font-size: 0.8rem; margin-top: 2px; }
+        .unit-label { color: var(--accent); font-weight: 600; }
+
+        .counter { display: flex; align-items: center; gap: 12px; background: #222; padding: 5px; border-radius: 12px; }
+        .btn-c { background: none; border: none; color: #fff; width: 30px; height: 30px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .count-val { font-weight: 800; min-width: 25px; text-align: center; font-size: 1rem; }
+        .btn-plus-init { background: var(--accent); border: none; color: #fff; padding: 10px 15px; border-radius: 12px; font-weight: 700; cursor: pointer; font-size: 0.9rem; }
+
+        .footer-cart { position: fixed; bottom: 20px; left: 20px; right: 20px; background: #fff; color: #000; padding: 20px; border-radius: 24px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .checkout-btn { background: #000; color: #fff; padding: 14px 24px; border-radius: 16px; border: none; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; overflow-y: auto; }
+        .modal-content { padding: 40px 20px; max-width: 450px; margin: 0 auto; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; color: var(--sec); font-size: 0.75rem; margin-bottom: 5px; text-transform: uppercase; }
+        input { width: 100%; padding: 16px; background: #1c1c1e; border: 1px solid #333; border-radius: 14px; color: #fff; box-sizing: border-box; font-size: 1rem; outline: none; }
+        .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 800; font-size: 1.1rem; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="tagline">Мясная мануфактура</div>
+    <h1 class="logo">ДОБРО</h1>
+</header>
+
+<div id="menu"></div>
+
+<div class="footer-cart">
+    <div>
+        <div style="font-size: 0.7rem; font-weight: 800; color: #888;">ИТОГО К ОПЛАТЕ</div>
+        <div style="font-weight: 900; font-size: 1.5rem;"><span id="total">0</span> BYN</div>
+    </div>
+    <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
+</div>
+
+<div id="modal">
+    <div class="modal-content">
+        <h2 style="font-weight: 900; font-size: 2rem;">Оформление заказа</h2>
+        <div class="form-group"><label>Ваше Имя</label><input type="text" id="name" placeholder="Иван"></div>
+        <div class="form-group"><label>Телефон</label><input type="tel" id="phone" value="+375"></div>
+        <div class="form-group"><label>Дата доставки</label><input type="date" id="date" onchange="validateDateTime()"></div>
+        <div class="form-group"><label>Время доставки</label><input type="time" id="time" onchange="validateDateTime()"></div>
+        <div id="time-error" style="color:var(--accent); font-size:0.85rem; margin-top:5px;"></div>
+        <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Отправить заказ</button>
+        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; cursor:pointer;">Назад в меню</button>
+    </div>
+</div>
+
+<script>
+    const products = [
+        { n: "Рваная говядина", p: 85, u: "кг" },
+        { n: "Говяжьи щечки", p: 110, u: "кг" },
+        { n: "Говяжий язык", p: 90, u: "кг" },
+        { n: "Буженина (шея)", p: 70, u: "кг" },
+        { n: "Рёбрышки мясные", p: 65, u: "кг" },
+        { n: "Рёбрышки пластинки", p: 50, u: "кг" },
+        { n: "Рулька", p: 55, u: "кг" },
+        { n: "Индейка", p: 70, u: "кг" },
+        { n: "Утка с яблоками (целая)", p: 150, u: "шт (~2кг)", isWhole: true },
+        { n: "Колбаски куриные", p: 60, u: "кг" },
+        { n: "Колбаски с чеддером", p: 70, u: "кг" },
+        { n: "Курица (бедро/голень)", p: 60, u: "кг" }
+    ];
+
+    let cart = {};
+    const menu = document.getElementById('menu');
+    document.getElementById('date').min = new Date().toISOString().split("T")[0];
+
+    function renderMenu() {
+        menu.innerHTML = "";
+        products.forEach(item => {
+            const count = cart[item.n] || 0;
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.innerHTML = `
+                <div class="item-info">
+                    <span class="item-name">${item.n}</span>
+                    <span class="item-price">Цена: <span style="color:#fff; font-weight:700;">${item.p} BYN</span> за ${item.u}</span>
+                </div>
+                ${count === 0 
+                    ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', 1)">Добавить</button>`
+                    : `<div class="counter">
+                        <button class="btn-c" onclick="updateCart('${item.n}', -1)">−</button>
+                        <span class="count-val">${count}</span>
+                        <button class="btn-c" onclick="updateCart('${item.n}', 1)">+</button>
+                       </div>`
+                }
+            `;
+            menu.appendChild(div);
+        });
+        updateTotal();
+    }
+
+    function updateCart(name, delta) {
+        cart[name] = (cart[name] || 0) + delta;
+        if (cart[name] <= 0) delete cart[name];
+        renderMenu();
+    }
+
+    function updateTotal() {
+        let total = 0;
+        products.forEach(p => { if(cart[p.n]) total += cart[p.n] * p.p; });
+        document.getElementById('total').innerText = total;
+    }
+
+    function toggleModal(s) {
+        if(document.getElementById('total').innerText == "0" && s) return alert("Корзина пуста");
+        document.getElementById('modal').style.display = s ? 'block' : 'none';
+    }
+
+    function validateDateTime() {
+        const d = new Date(document.getElementById('date').value);
+        const t = document.getElementById('time').value;
+        const err = document.getElementById('time-error');
+        const btn = document.getElementById('sendBtn');
+        const day = d.getDay(); 
+        let msg = "";
+        if (day === 0) msg = "В воскресенье мы не работаем.";
+        else if (t) {
+            const h = parseInt(t.split(':')[0]);
+            if (day >= 1 && day <= 5 && (h < 10 || h >= 18)) msg = "Будни: работаем 10:00 - 18:00";
+            if (day === 6 && (h < 10 || h >= 17)) msg = "Суббота: работаем 10:00 - 17:00";
+        }
+        err.innerText = msg;
+        btn.disabled = msg !== "";
+    }
+
+    async function sendToTelegram() {
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
+        if(!name || phone.length < 9) return alert("Заполните корректно имя и телефон!");
+
+        let orderNum = localStorage.getItem('orderCounter') || 1;
+        let formattedNum = String(orderNum).padStart(3, '0');
+
+        let orderList = "";
+        for (let n in cart) {
+            const p = products.find(x => x.n === n);
+            const unit = p.isWhole ? "шт" : "кг";
+            orderList += `• ${n}: ${cart[n]} ${unit} x ${p.p}р\n`;
+        }
+
+        const text = `🧾 ЗАКАЗ №${formattedNum}\n` +
+                     `━━━━━━━━━━━━━\n` +
+                     `👤 Клиент: ${name}\n` +
+                     `📞 Тел: ${phone}\n` +
+                     `📅 Дата: ${document.getElementById('date').value}\n` +
+                     `⏰ Время: ${document.getElementById('time').value}\n` +
+                     `━━━━━━━━━━━━━\n` +
+                     `🛒 Состав:\n${orderList}\n` +
+                     `💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
+
+        const token = "8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0";
+        const chatId = "-1003698576143";
+
+        try {
+            const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: text })
+            });
+            if(res.ok) {
+                localStorage.setItem('orderCounter', parseInt(orderNum) + 1);
+                alert("Заказ №" + formattedNum + " успешно отправлен!");
+                location.reload();
+            }
+        } catch (e) { alert("Ошибка сети!"); }
+    }
+
+    renderMenu();
+</script>
+</body>
+</html>
