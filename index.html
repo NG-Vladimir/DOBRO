@@ -25,41 +25,35 @@
         .btn-plus-init { background: var(--accent); border: none; color: #fff; padding: 12px 18px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
 
         .footer-cart { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #fff; color: #000; padding: 20px; border-radius: 26px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-        .total-container.bump { animation: bump 0.3s ease-out; }
         .checkout-btn { background: #000; color: #fff; padding: 14px 24px; border-radius: 16px; border: none; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
 
-        /* MODAL iOS STYLE */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
-        .modal-content { 
+        #modal, #success-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+        
+        .modal-content, .success-content { 
             position: absolute; bottom: 0; left: 0; right: 0;
             background: #161618; padding: 30px 20px 40px; 
             border-radius: 30px 30px 0 0; border-top: 1px solid #333;
             animation: slideUpModal 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
-        
-        .form-group { margin-bottom: 20px; }
-        label { display: block; color: var(--sec); font-size: 0.7rem; margin-bottom: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
-        input { 
-            width: 100%; padding: 16px; background: #222; border: 1px solid #333; 
-            border-radius: 14px; color: #fff; font-size: 16px; outline: none;
-            -webkit-appearance: none;
-        }
-        input:focus { border-color: var(--accent); }
-        
-        /* FIX SIDE-BY-SIDE */
-        .side-by-side { display: flex; gap: 12px; width: 100%; }
-        .side-by-side .form-group { flex: 1; min-width: 0; margin-bottom: 0; }
-        
-        /* Убираем лишние иконки чтобы не ломали верстку */
-        input[type="date"], input[type="time"] { min-height: 52px; text-align: center; }
 
-        .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 1.1rem; margin-top: 25px; cursor: pointer; }
+        .success-content { height: 90vh; overflow-y: auto; text-align: center; background: #fff; color: #000; }
+        
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; color: var(--sec); font-size: 0.7rem; margin-bottom: 8px; text-transform: uppercase; font-weight: 800; }
+        input { width: 100%; padding: 16px; background: #222; border: 1px solid #333; border-radius: 14px; color: #fff; font-size: 16px; }
+        
+        .side-by-side { display: flex; gap: 12px; }
+        .side-by-side .form-group { flex: 1; }
+
+        .receipt-card { background: #f2f2f7; padding: 20px; border-radius: 20px; margin: 20px 0; text-align: left; border: 1px dashed #ccc; }
+        .receipt-id { font-weight: 900; font-size: 1.8rem; color: var(--accent); margin-bottom: 10px; display: block; }
+        .instruction { background: #FF3B30; color: #fff; padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 20px; display: inline-block; width: 100%; }
+
+        .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
         .submit-btn:disabled { opacity: 0.2; }
-        #time-error { color: var(--accent); font-size: 0.85rem; margin-top: 10px; text-align: center; font-weight: 600; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes bump { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -73,7 +67,7 @@
 
 <div class="footer-cart">
     <div class="total-container" id="totalWrapper">
-        <div style="font-size: 0.65rem; font-weight: 800; color: #888; text-transform: uppercase;">Итого</div>
+        <div style="font-size: 0.65rem; font-weight: 800; color: #888; text-transform: uppercase;">К оплате</div>
         <div style="font-weight: 900; font-size: 1.5rem;"><span id="total">0</span> BYN</div>
     </div>
     <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
@@ -88,9 +82,40 @@
             <div class="form-group"><label>Дата</label><input type="date" id="date"></div>
             <div class="form-group"><label>Время</label><input type="time" id="time"></div>
         </div>
-        <div id="time-error"></div>
+        <div id="time-error" style="color:#FF3B30; font-size:0.8rem; margin-bottom:10px; text-align:center;"></div>
         <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Заказать в Telegram</button>
-        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; font-weight:700; cursor:pointer; text-transform:uppercase; font-size:0.75rem;">Назад к меню</button>
+        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; font-weight:700; cursor:pointer;">Назад</button>
+    </div>
+</div>
+
+<div id="success-screen">
+    <div class="success-content">
+        <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
+        <h2 style="font-weight: 900; font-size: 1.6rem; margin: 0;">ЗАКАЗ ПРИНЯТ!</h2>
+        
+        <div class="receipt-card">
+            <span style="font-size: 0.7rem; text-transform: uppercase; color: #888;">Номер вашего чека</span>
+            <span class="receipt-id" id="res-id">#000000</span>
+            
+            <div id="res-items" style="margin: 15px 0; font-size: 0.9rem; line-height: 1.6;"></div>
+            
+            <hr style="border: none; border-top: 1px solid #eee;">
+            <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; margin-top: 10px;">
+                <span>ИТОГО:</span>
+                <span id="res-total">0 BYN</span>
+            </div>
+            <div style="margin-top: 10px; font-size: 0.85rem; color: #555;">
+                📅 Дата: <span id="res-date"></span><br>
+                ⏰ Время: <span id="res-time"></span>
+            </div>
+        </div>
+
+        <div class="instruction">
+            📸 СДЕЛАЙТЕ СКРИНШОТ<br>
+            <span style="font-size: 0.8rem; font-weight: 400;">Предъявите его при получении заказа</span>
+        </div>
+
+        <button onclick="location.reload()" style="margin-top: 30px; background: #000; color: #fff; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800;">ВЕРНУТЬСЯ В МЕНЮ</button>
     </div>
 </div>
 
@@ -111,47 +136,38 @@
     ];
 
     let cart = {};
-    const menu = document.getElementById('menu');
-    const phoneInput = document.getElementById('phone');
     const dateInp = document.getElementById('date');
     const timeInp = document.getElementById('time');
-    const now = new Date();
-    dateInp.min = now.toISOString().split("T")[0];
+    dateInp.min = new Date().toISOString().split("T")[0];
 
-    phoneInput.addEventListener('input', (e) => {
+    document.getElementById('phone').addEventListener('input', (e) => {
         let val = e.target.value.replace(/\D/g, '');
         if (val.startsWith('375')) val = val.substring(3);
         let x = val.match(/(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         e.target.value = '+375 ' + (x[1] ? '(' + x[1] + ') ' : '') + x[2] + (x[3] ? '-' + x[3] : '') + (x[4] ? '-' + x[4] : '');
     });
 
-    phoneInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace' && e.target.value.length <= 5) e.preventDefault();
-    });
-
     function renderMenu() {
+        const menu = document.getElementById('menu');
         menu.innerHTML = "";
         products.forEach((item, index) => {
             const count = cart[item.n] || 0;
             const displayCount = Number.isInteger(count) ? count : count.toFixed(1);
-            const div = document.createElement('div');
-            div.className = 'item';
-            div.style.animationDelay = (index * 0.05) + 's';
-            div.innerHTML = `
-                <div class="item-info">
-                    <span class="item-name">${item.n}</span>
-                    <span class="item-price">${item.p} BYN / ${item.u}</span>
-                </div>
-                ${count === 0 
-                    ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', 0.5)">Добавить</button>`
-                    : `<div class="counter">
-                        <button class="btn-c" onclick="updateCart('${item.n}', -0.5)">−</button>
-                        <span class="count-val">${displayCount}</span>
-                        <button class="btn-c" onclick="updateCart('${item.n}', 0.5)">+</button>
-                       </div>`
-                }
-            `;
-            menu.appendChild(div);
+            menu.innerHTML += `
+                <div class="item" style="animation-delay: ${index*0.05}s">
+                    <div class="item-info">
+                        <span class="item-name">${item.n}</span>
+                        <span class="item-price">${item.p} BYN / ${item.u}</span>
+                    </div>
+                    ${count === 0 
+                        ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', 0.5)">Добавить</button>`
+                        : `<div class="counter">
+                            <button class="btn-c" onclick="updateCart('${item.n}', -0.5)">−</button>
+                            <span class="count-val">${displayCount}</span>
+                            <button class="btn-c" onclick="updateCart('${item.n}', 0.5)">+</button>
+                           </div>`
+                    }
+                </div>`;
         });
         updateTotal();
     }
@@ -161,10 +177,6 @@
         let newValue = parseFloat((current + delta).toFixed(1));
         if (newValue <= 0) delete cart[name]; else cart[name] = newValue;
         renderMenu();
-        const wrapper = document.getElementById('totalWrapper');
-        wrapper.classList.remove('bump');
-        void wrapper.offsetWidth;
-        wrapper.classList.add('bump');
     }
 
     function updateTotal() {
@@ -174,59 +186,50 @@
     }
 
     function toggleModal(s) {
-        if(document.getElementById('total').innerText == "0" && s) return;
         document.getElementById('modal').style.display = s ? 'block' : 'none';
-        document.body.style.overflow = s ? 'hidden' : 'auto';
     }
-
-    function validateDateTime() {
-        const d = new Date(dateInp.value);
-        const t = timeInp.value;
-        const err = document.getElementById('time-error');
-        const btn = document.getElementById('sendBtn');
-        const day = d.getDay();
-        let msg = "";
-        if (day === 0) msg = "Воскресенье — выходной";
-        else if (t) {
-            const h = parseInt(t.split(':')[0]);
-            if (day >= 1 && day <= 5 && (h < 10 || h >= 18)) msg = "Будни: 10:00 - 18:00";
-            if (day === 6 && (h < 10 || h >= 17)) msg = "Суббота: 10:00 - 17:00";
-            if (dateInp.value === now.toISOString().split("T")[0]) {
-                if (h < now.getHours()) msg = "Это время уже прошло";
-            }
-        }
-        err.innerText = msg ? "⚠️ " + msg : "";
-        btn.disabled = msg !== "";
-    }
-
-    dateInp.addEventListener('change', validateDateTime);
-    timeInp.addEventListener('change', validateDateTime);
 
     async function sendToTelegram() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        if(!name || phone.length < 18 || !dateInp.value || !timeInp.value) return alert("Заполните все данные!");
+        const date = dateInp.value;
+        const time = timeInp.value;
 
-        const orderId = "ID-" + Date.now().toString().slice(-6); 
+        if(!name || phone.length < 18 || !date || !time) return alert("Заполните форму!");
+
+        const orderId = "№" + Math.floor(100000 + Math.random() * 900000); 
         let orderList = "";
+        let itemsHtml = "";
+
         for (let n in cart) {
-            const p = products.find(x => x.n === n);
-            orderList += `• ${n}: ${cart[n]} кг x ${p.p}р\n`;
+            orderList += `• ${n}: ${cart[n]} кг\n`;
+            itemsHtml += `<div>• ${n}: <b>${cart[n]} кг</b></div>`;
         }
 
-        const message = `ЗАКАЗ №${orderId}\n━━━━━━━━━━━━━\nКлиент: ${name}\nТел: ${phone}\nДата: ${dateInp.value}\nВремя: ${timeInp.value}\n━━━━━━━━━━━━━\nЗаказ:\n${orderList}\nИТОГО: ${document.getElementById('total').innerText} BYN`;
+        const total = document.getElementById('total').innerText;
+        const message = `ЗАКАЗ ${orderId}\nКлиент: ${name}\nТел: ${phone}\nДата: ${date}\nВремя: ${time}\n\n${orderList}\nИТОГО: ${total} BYN`;
 
         const token = "8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0";
         const chatId = "-1003698576143";
 
         try {
-            const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ chat_id: chatId, text: message })
             });
-            if(res.ok) { alert("Заказ №" + orderId + " принят!"); location.reload(); }
-        } catch (e) { alert("Ошибка соединения!"); }
+
+            // Показываем экран чека
+            document.getElementById('modal').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            
+            document.getElementById('res-id').innerText = orderId;
+            document.getElementById('res-items').innerHTML = itemsHtml;
+            document.getElementById('res-total').innerText = total + " BYN";
+            document.getElementById('res-date').innerText = date;
+            document.getElementById('res-time').innerText = time;
+
+        } catch (e) { alert("Ошибка!"); }
     }
 
     renderMenu();
