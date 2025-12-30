@@ -14,7 +14,8 @@
         .tagline { color: var(--accent); text-transform: uppercase; font-size: 0.65rem; letter-spacing: 2px; font-weight: 700; }
         
         .item { background: var(--card); padding: 16px; border-radius: 18px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border: 1px solid #222; }
-        .item-name { font-weight: 600; font-size: 0.95rem; display: block; margin-bottom: 2px; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: 600; font-size: 1rem; display: block; margin-bottom: 2px; }
         .item-price { color: var(--sec); font-size: 0.8rem; }
 
         .counter { display: flex; align-items: center; gap: 8px; background: #222; padding: 4px; border-radius: 12px; }
@@ -23,9 +24,9 @@
         .btn-plus-init { background: var(--accent); border: none; color: #fff; padding: 10px 14px; border-radius: 12px; font-weight: 700; font-size: 0.85rem; }
 
         .footer-cart { position: fixed; bottom: 15px; left: 15px; right: 15px; background: #fff; color: #000; padding: 18px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .checkout-btn { background: #000; color: #fff; padding: 12px 20px; border-radius: 14px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; }
+        .checkout-btn { background: #000; color: #fff; padding: 12px 20px; border-radius: 14px; border: none; font-weight: 800; text-transform: uppercase; font-size: 0.75rem; cursor: pointer; }
 
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 2000; overflow-y: auto; }
         .modal-content { padding: 30px 20px; width: 100%; max-width: 400px; margin: 0 auto; box-sizing: border-box; }
         
         .form-group { margin-bottom: 15px; }
@@ -33,11 +34,11 @@
         input { width: 100%; padding: 14px; background: #1c1c1e; border: 1px solid #333; border-radius: 12px; color: #fff; box-sizing: border-box; font-size: 16px; outline: none; appearance: none; -webkit-appearance: none; }
         input:focus { border-color: var(--accent); }
         
-        /* Исправление для Даты и Времени, чтобы не вылезали */
         .side-by-side { display: flex; gap: 10px; }
         .side-by-side .form-group { flex: 1; margin-bottom: 0; }
 
-        .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1rem; margin-top: 15px; cursor: pointer; }
+        .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1rem; margin-top: 15px; cursor: pointer; transition: 0.3s; }
+        .submit-btn:disabled { opacity: 0.2; cursor: not-allowed; }
         #time-error { color: var(--accent); font-size: 0.8rem; margin-top: 8px; font-weight: 600; line-height: 1.3; }
     </style>
 </head>
@@ -52,27 +53,28 @@
 
 <div class="footer-cart">
     <div>
-        <div style="font-size: 0.6rem; font-weight: 800; color: #888;">СУММА</div>
-        <div style="font-weight: 900; font-size: 1.3rem;"><span id="total">0</span> BYN</div>
+        <div style="font-size: 0.6rem; font-weight: 800; color: #888; text-transform: uppercase;">Итого к заказу</div>
+        <div style="font-weight: 900; font-size: 1.4rem;"><span id="total">0</span> BYN</div>
     </div>
     <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
 </div>
 
 <div id="modal">
     <div class="modal-content">
-        <h2 style="font-weight: 900; font-size: 1.8rem; margin: 0 0 15px 0;">Заказ</h2>
+        <h2 style="font-weight: 900; font-size: 1.8rem; margin: 0 0 10px 0;">Оформление</h2>
+        <p style="color: var(--sec); font-size: 0.85rem; margin-bottom: 25px;">Заполните данные для доставки</p>
         
-        <div class="form-group"><label>Имя</label><input type="text" id="name" placeholder="Введите имя"></div>
+        <div class="form-group"><label>Ваше Имя</label><input type="text" id="name" placeholder="Имя"></div>
         <div class="form-group"><label>Телефон</label><input type="tel" id="phone" value="+375 "></div>
         
         <div class="side-by-side">
-            <div class="form-group"><label>Дата</label><input type="date" id="date" onchange="validateDateTime()"></div>
-            <div class="form-group"><label>Время</label><input type="time" id="time" onchange="validateDateTime()"></div>
+            <div class="form-group"><label>Дата</label><input type="date" id="date"></div>
+            <div class="form-group"><label>Время</label><input type="time" id="time"></div>
         </div>
         
         <div id="time-error"></div>
-        <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Заказать</button>
-        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; font-weight:600;">← Назад</button>
+        <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Заказать в Telegram</button>
+        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; font-weight:600; cursor:pointer;">← Назад в меню</button>
     </div>
 </div>
 
@@ -95,16 +97,21 @@
     let cart = {};
     const menu = document.getElementById('menu');
     const phoneInput = document.getElementById('phone');
-    document.getElementById('date').min = new Date().toISOString().split("T")[0];
+    const dateInp = document.getElementById('date');
+    const timeInp = document.getElementById('time');
+
+    // Настройка календаря
+    const now = new Date();
+    dateInp.min = now.toISOString().split("T")[0];
 
     // Маска телефона +375 (XX) XXX-XX-XX
     phoneInput.addEventListener('input', (e) => {
-        let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
+        let val = e.target.value.replace(/\D/g, '');
+        let x = val.match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[1]) { e.target.value = '+375 '; return; }
         e.target.value = '+375 ' + (x[2] ? '(' + x[2] : '') + (x[2].length === 2 ? ') ' : '') + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
     });
 
-    // Запрет на стирание +375
     phoneInput.addEventListener('keydown', (e) => {
         if (e.key === 'Backspace' && e.target.value.length <= 5) e.preventDefault();
     });
@@ -122,7 +129,11 @@
                 </div>
                 ${count === 0 
                     ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', 1)">Добавить</button>`
-                    : `<div class="counter"><button class="btn-c" onclick="updateCart('${item.n}', -1)">−</button><span class="count-val">${count}</span><button class="btn-c" onclick="updateCart('${item.n}', 1)">+</button></div>`
+                    : `<div class="counter">
+                        <button class="btn-c" onclick="updateCart('${item.n}', -1)">−</button>
+                        <span class="count-val">${count}</span>
+                        <button class="btn-c" onclick="updateCart('${item.n}', 1)">+</button>
+                       </div>`
                 }
             `;
             menu.appendChild(div);
@@ -143,45 +154,71 @@
     }
 
     function toggleModal(s) {
-        if(document.getElementById('total').innerText == "0" && s) return alert("Корзина пуста");
+        if(document.getElementById('total').innerText == "0" && s) return alert("Выберите товары!");
         document.getElementById('modal').style.display = s ? 'block' : 'none';
-        document.body.style.overflow = s ? 'hidden' : 'auto'; // Запрет скролла под модалкой
+        document.body.style.overflow = s ? 'hidden' : 'auto';
     }
 
     function validateDateTime() {
-        const d = new Date(document.getElementById('date').value);
-        const t = document.getElementById('time').value;
+        const selectedDate = new Date(dateInp.value);
+        const selectedTime = timeInp.value;
         const err = document.getElementById('time-error');
         const btn = document.getElementById('sendBtn');
-        const day = d.getDay(); 
+        const day = selectedDate.getDay(); 
+        const todayStr = now.toISOString().split("T")[0];
+        
         let msg = "";
-        if (day === 0) msg = "Воскресенье — выходной.";
-        else if (t) {
-            const h = parseInt(t.split(':')[0]);
-            if (day >= 1 && day <= 5 && (h < 10 || h >= 18)) msg = "Будни: 10:00 - 18:00";
-            if (day === 6 && (h < 10 || h >= 17)) msg = "Суббота: 10:00 - 17:00";
+        const monthDay = `${selectedDate.getMonth() + 1}-${selectedDate.getDate()}`;
+        const holidays = ['1-1', '1-2', '1-7', '3-8', '5-1', '5-9', '7-3', '11-7', '12-25']; 
+        
+        if (holidays.includes(monthDay)) {
+            msg = "Этот день праздничный, мы отдыхаем.";
+        } else if (day === 0) {
+            msg = "Воскресенье — выходной.";
+        } else if (selectedTime) {
+            const h = parseInt(selectedTime.split(':')[0]);
+            const m = parseInt(selectedTime.split(':')[1]);
+            const timeVal = h + m/60;
+
+            if (day >= 1 && day <= 5) {
+                if (timeVal < 10 || timeVal >= 18) msg = "Будни: работаем с 10:00 до 18:00";
+            } else if (day === 6) {
+                if (timeVal < 10 || timeVal >= 17) msg = "Суббота: работаем с 10:00 до 17:00";
+            }
+
+            if (dateInp.value === todayStr) {
+                if (h < now.getHours() || (h === now.getHours() && m <= now.getMinutes())) {
+                    msg = "Нельзя заказать на прошедшее время.";
+                }
+            }
         }
-        err.innerText = msg;
+
+        err.innerText = msg ? "⚠️ " + msg : "";
         btn.disabled = msg !== "";
     }
+
+    dateInp.addEventListener('change', validateDateTime);
+    timeInp.addEventListener('change', validateDateTime);
 
     async function sendToTelegram() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        const date = document.getElementById('date').value;
-        const time = document.getElementById('time').value;
-        if(!name || phone.length < 18 || !date || !time) return alert("Заполните все поля заказа!");
+        const d = dateInp.value;
+        const t = timeInp.value;
+        
+        if(!name || phone.length < 18 || !d || !t) return alert("Заполните все данные!");
 
         let orderNum = localStorage.getItem('orderCounter') || 1;
         let formattedNum = String(orderNum).padStart(3, '0');
+
         let orderList = "";
         for (let n in cart) {
             const p = products.find(x => x.n === n);
             orderList += `• ${n}: ${cart[n]} ${p.isWhole?'шт':'кг'} x ${p.p}р\n`;
         }
 
-        const text = `🧾 ЗАКАЗ №${formattedNum}\n━━━━━━━━━━━━━\n👤 Клиент: ${name}\n📞 Тел: ${phone}\n📅 Дата: ${date}\n⏰ Время: ${time}\n━━━━━━━━━━━━━\n🛒 Состав:\n${orderList}\n💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
-        
+        const message = `🧾 ЧЕК №${formattedNum}\n━━━━━━━━━━━━━\n👤 Клиент: ${name}\n📞 Тел: ${phone}\n📅 Дата: ${d}\n⏰ Время: ${t}\n━━━━━━━━━━━━━\n🛒 Состав:\n${orderList}\n💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
+
         const token = "8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0";
         const chatId = "-1003698576143";
 
@@ -189,14 +226,14 @@
             const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatId, text: text })
+                body: JSON.stringify({ chat_id: chatId, text: message })
             });
             if(res.ok) {
                 localStorage.setItem('orderCounter', parseInt(orderNum) + 1);
                 alert("Заказ №" + formattedNum + " отправлен!");
                 location.reload();
             }
-        } catch (e) { alert("Ошибка сети!"); }
+        } catch (e) { alert("Ошибка связи с Telegram!"); }
     }
 
     renderMenu();
