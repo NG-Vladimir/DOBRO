@@ -17,6 +17,7 @@
         .call-link { color: var(--sec); text-decoration: none; font-size: 0.8rem; border: 1px solid #333; padding: 8px 12px; border-radius: 12px; }
 
         .item { background: var(--card); padding: 18px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border); animation: slideUp 0.4s ease backwards; }
+        .item-info { flex: 1; }
         .item-name { font-weight: 600; font-size: 1rem; display: block; margin-bottom: 4px; }
         .item-price { color: var(--sec); font-size: 0.8rem; }
 
@@ -47,14 +48,17 @@
             width: 100%; padding: 14px; background: #222; border: 1px solid #333; 
             border-radius: 14px; color: #fff; font-size: 16px; font-family: inherit;
         }
-        textarea { height: 80px; resize: none; }
+        
+        /* Исправленная сетка для даты и времени */
+        .side-by-side { display: flex; gap: 10px; width: 100%; }
+        .side-by-side .form-group { flex: 1; min-width: 0; margin-bottom: 0; }
+        .side-by-side input { padding: 14px 8px; font-size: 14px; text-align: center; }
 
-        .side-by-side { display: flex; gap: 12px; width: 100%; }
-        .side-by-side .form-group { flex: 1; min-width: 0; }
+        textarea { height: 80px; resize: none; }
 
         .receipt-card { background: #f2f2f7; padding: 20px; border-radius: 20px; margin: 20px 0; text-align: left; border: 1px dashed #ccc; }
         .receipt-id { font-weight: 900; font-size: 1.8rem; color: var(--accent); margin-bottom: 10px; display: block; }
-        .instruction { background: #FF3B30; color: #fff; padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 20px; width: 100%; }
+        .instruction { background: #FF3B30; color: #fff; padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 20px; width: 100%; text-align: center; }
 
         .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
 
@@ -69,7 +73,7 @@
         <h1 class="logo">ДОБРО</h1>
         <div class="tagline">Мясная мануфактура</div>
     </div>
-    <a href="tel:+375296860287" class="call-link">📞 Позвонить</a>
+    <a href="tel:+375XXXXXXXXX" class="call-link">📞 Позвонить</a>
 </header>
 
 <div id="menu"></div>
@@ -77,7 +81,7 @@
 <div class="footer-cart">
     <div class="cart-stats">
         <div style="font-size: 0.6rem; font-weight: 800; color: #888; text-transform: uppercase;">
-            <span id="items-count">0</span> позиц. • Сумма
+            <span id="items-count">0</span> поз. • Сумма
         </div>
         <div style="font-weight: 900; font-size: 1.4rem;"><span id="total">0</span> BYN</div>
     </div>
