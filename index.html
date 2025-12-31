@@ -11,21 +11,23 @@
         
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; padding-bottom: 140px; }
         
-        header { padding: 30px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
-        .logo { font-weight: 900; font-size: 3rem; letter-spacing: -2px; margin: 0; line-height: 1; }
-        .tagline { color: var(--accent); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 3px; font-weight: 700; margin-top: 5px; }
+        header { padding: 30px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; font-size: 2.5rem; letter-spacing: -2px; margin: 0; line-height: 1; }
+        .tagline { color: var(--accent); text-transform: uppercase; font-size: 0.6rem; letter-spacing: 2px; font-weight: 700; margin-top: 5px; }
+        .call-link { color: var(--sec); text-decoration: none; font-size: 0.8rem; border: 1px solid #333; padding: 8px 12px; border-radius: 12px; }
 
         .item { background: var(--card); padding: 18px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border: 1px solid var(--border); animation: slideUp 0.4s ease backwards; }
-        .item-name { font-weight: 600; font-size: 1.05rem; display: block; margin-bottom: 4px; }
-        .item-price { color: var(--sec); font-size: 0.85rem; }
+        .item-name { font-weight: 600; font-size: 1rem; display: block; margin-bottom: 4px; }
+        .item-price { color: var(--sec); font-size: 0.8rem; }
 
         .counter { display: flex; align-items: center; gap: 8px; background: #222; padding: 5px; border-radius: 14px; border: 1px solid #333; }
-        .btn-c { background: none; border: none; color: #fff; width: 36px; height: 36px; font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .count-val { font-weight: 800; min-width: 32px; text-align: center; font-size: 1.1rem; color: var(--accent); }
-        .btn-plus-init { background: var(--accent); border: none; color: #fff; padding: 12px 18px; border-radius: 14px; font-weight: 800; font-size: 0.85rem; cursor: pointer; }
+        .btn-c { background: none; border: none; color: #fff; width: 34px; height: 34px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .count-val { font-weight: 800; min-width: 32px; text-align: center; font-size: 1rem; color: var(--accent); }
+        .btn-plus-init { background: var(--accent); border: none; color: #fff; padding: 10px 16px; border-radius: 12px; font-weight: 800; font-size: 0.8rem; cursor: pointer; }
 
-        .footer-cart { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #fff; color: #000; padding: 20px; border-radius: 26px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
-        .checkout-btn { background: #000; color: #fff; padding: 14px 24px; border-radius: 16px; border: none; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
+        .footer-cart { position: fixed; bottom: 20px; left: 15px; right: 15px; background: #fff; color: #000; padding: 18px; border-radius: 26px; display: flex; justify-content: space-between; align-items: center; z-index: 1000; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .cart-stats { display: flex; flex-direction: column; }
+        .checkout-btn { background: #000; color: #fff; padding: 14px 22px; border-radius: 16px; border: none; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; cursor: pointer; }
 
         #modal, #success-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
         
@@ -36,21 +38,25 @@
             animation: slideUpModal 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .success-content { height: 90vh; overflow-y: auto; text-align: center; background: #fff; color: #000; }
+        .success-content { height: 95vh; overflow-y: auto; text-align: center; background: #fff; color: #000; padding-top: 40px; }
         
-        .form-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; color: var(--sec); font-size: 0.7rem; margin-bottom: 8px; text-transform: uppercase; font-weight: 800; }
-        input { width: 100%; padding: 16px; background: #222; border: 1px solid #333; border-radius: 14px; color: #fff; font-size: 16px; }
+        .form-group { margin-bottom: 15px; text-align: left; width: 100%; }
+        label { display: block; color: var(--sec); font-size: 0.65rem; margin-bottom: 6px; text-transform: uppercase; font-weight: 800; }
         
-        .side-by-side { display: flex; gap: 12px; }
-        .side-by-side .form-group { flex: 1; }
+        input, textarea { 
+            width: 100%; padding: 14px; background: #222; border: 1px solid #333; 
+            border-radius: 14px; color: #fff; font-size: 16px; font-family: inherit;
+        }
+        textarea { height: 80px; resize: none; }
+
+        .side-by-side { display: flex; gap: 12px; width: 100%; }
+        .side-by-side .form-group { flex: 1; min-width: 0; }
 
         .receipt-card { background: #f2f2f7; padding: 20px; border-radius: 20px; margin: 20px 0; text-align: left; border: 1px dashed #ccc; }
         .receipt-id { font-weight: 900; font-size: 1.8rem; color: var(--accent); margin-bottom: 10px; display: block; }
-        .instruction { background: #FF3B30; color: #fff; padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 20px; display: inline-block; width: 100%; }
+        .instruction { background: #FF3B30; color: #fff; padding: 15px; border-radius: 15px; font-weight: 700; margin-top: 20px; width: 100%; }
 
         .submit-btn { background: var(--accent); color: #fff; border: none; width: 100%; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
-        .submit-btn:disabled { opacity: 0.2; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes slideUpModal { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -59,63 +65,73 @@
 <body>
 
 <header>
-    <div class="tagline">Мясная мануфактура</div>
-    <h1 class="logo">ДОБРО</h1>
+    <div>
+        <h1 class="logo">ДОБРО</h1>
+        <div class="tagline">Мясная мануфактура</div>
+    </div>
+    <a href="tel:+375296860287" class="call-link">📞 Позвонить</a>
 </header>
 
 <div id="menu"></div>
 
 <div class="footer-cart">
-    <div class="total-container" id="totalWrapper">
-        <div style="font-size: 0.65rem; font-weight: 800; color: #888; text-transform: uppercase;">К оплате</div>
-        <div style="font-weight: 900; font-size: 1.5rem;"><span id="total">0</span> BYN</div>
+    <div class="cart-stats">
+        <div style="font-size: 0.6rem; font-weight: 800; color: #888; text-transform: uppercase;">
+            <span id="items-count">0</span> позиц. • Сумма
+        </div>
+        <div style="font-weight: 900; font-size: 1.4rem;"><span id="total">0</span> BYN</div>
     </div>
     <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
 </div>
 
 <div id="modal">
     <div class="modal-content">
-        <h2 style="font-weight: 900; font-size: 1.8rem; margin: 0 0 20px 0;">Оформление</h2>
-        <div class="form-group"><label>Ваше имя</label><input type="text" id="name" placeholder="Иван"></div>
+        <h2 style="font-weight: 900; font-size: 1.8rem; margin: 0 0 15px 0;">Ваши данные</h2>
+        <div class="form-group"><label>Имя</label><input type="text" id="name" placeholder="Как к вам обращаться?"></div>
         <div class="form-group"><label>Телефон</label><input type="tel" id="phone" value="+375 "></div>
+        
         <div class="side-by-side">
             <div class="form-group"><label>Дата</label><input type="date" id="date"></div>
             <div class="form-group"><label>Время</label><input type="time" id="time"></div>
         </div>
-        <div id="time-error" style="color:#FF3B30; font-size:0.8rem; margin-bottom:10px; text-align:center;"></div>
-        <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Заказать в Telegram</button>
-        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:20px; font-weight:700; cursor:pointer;">Назад</button>
+
+        <div class="form-group" style="margin-top:15px;"><label>Комментарий (необязательно)</label><textarea id="comment" placeholder="Например: домофон не работает, мясо пожирнее..."></textarea></div>
+        
+        <div id="time-error" style="color:#FF3B30; font-size:0.75rem; margin-bottom:10px; text-align:center;"></div>
+        <button class="submit-btn" id="sendBtn" onclick="sendToTelegram()">Заказать мясо</button>
+        <button onclick="toggleModal(false)" style="color:#888; background:none; border:none; width:100%; padding:15px; font-weight:700; cursor:pointer;">Вернуться назад</button>
     </div>
 </div>
 
 <div id="success-screen">
     <div class="success-content">
-        <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
-        <h2 style="font-weight: 900; font-size: 1.6rem; margin: 0;">ЗАКАЗ ПРИНЯТ!</h2>
+        <div style="font-size: 3rem;">✅</div>
+        <h2 style="font-weight: 900; font-size: 1.6rem;">ЗАКАЗ ПРИНЯТ!</h2>
         
         <div class="receipt-card">
-            <span style="font-size: 0.7rem; text-transform: uppercase; color: #888;">Номер вашего чека</span>
+            <span style="font-size: 0.7rem; text-transform: uppercase; color: #888;">Ваш уникальный чек</span>
             <span class="receipt-id" id="res-id">#000000</span>
-            
-            <div id="res-items" style="margin: 15px 0; font-size: 0.9rem; line-height: 1.6;"></div>
-            
-            <hr style="border: none; border-top: 1px solid #eee;">
-            <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.1rem; margin-top: 10px;">
+            <div id="res-items" style="margin: 15px 0; font-size: 0.85rem; line-height: 1.5; color: #333;"></div>
+            <hr style="border:none; border-top:1px dashed #ccc;">
+            <div style="display: flex; justify-content: space-between; font-weight: 900; font-size: 1.2rem; margin-top: 10px;">
                 <span>ИТОГО:</span>
                 <span id="res-total">0 BYN</span>
             </div>
-            <div style="margin-top: 10px; font-size: 0.85rem; color: #555;">
-                📅 Дата: <span id="res-date"></span><br>
-                ⏰ Время: <span id="res-time"></span>
+            <div style="margin-top:10px; font-size:0.8rem; color:#666;">
+                📅 Доставка: <span id="res-date"></span> в <span id="res-time"></span>
             </div>
         </div>
 
         <div class="instruction">
             📸 СДЕЛАЙТЕ СКРИНШОТ<br>
-            <span style="font-size: 0.8rem; font-weight: 400;">Предъявите его при получении заказа</span>
+            <span style="font-size: 0.7rem; font-weight: 400;">Покажите его курьеру или при получении</span>
+        </div>
+        
+        <div style="margin-top: 20px; font-size: 0.8rem; color: #888; line-height: 1.4;">
+            💡 Совет: перед употреблением прогрейте мясо в духовке при 150°C около 10 минут.
         </div>
 
-        <button onclick="location.reload()" style="margin-top: 30px; background: #000; color: #fff; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800;">ВЕРНУТЬСЯ В МЕНЮ</button>
+        <button onclick="location.reload()" style="margin-top: 25px; background: #000; color: #fff; border: none; padding: 18px; border-radius: 15px; width: 100%; font-weight: 800;">В НАЧАЛО</button>
     </div>
 </div>
 
@@ -181,11 +197,18 @@
 
     function updateTotal() {
         let t = 0;
-        products.forEach(p => { if(cart[p.n]) t += cart[p.n] * p.p; });
+        let c = 0;
+        for (let n in cart) {
+            const p = products.find(x => x.n === n);
+            t += cart[n] * p.p;
+            c++;
+        }
         document.getElementById('total').innerText = t.toFixed(1).replace('.0', '');
+        document.getElementById('items-count').innerText = c;
     }
 
     function toggleModal(s) {
+        if(document.getElementById('total').innerText == "0" && s) return;
         document.getElementById('modal').style.display = s ? 'block' : 'none';
     }
 
@@ -194,10 +217,11 @@
         const phone = document.getElementById('phone').value;
         const date = dateInp.value;
         const time = timeInp.value;
+        const comm = document.getElementById('comment').value || "нет";
 
-        if(!name || phone.length < 18 || !date || !time) return alert("Заполните форму!");
+        if(!name || phone.length < 18 || !date || !time) return alert("Заполните данные!");
 
-        const orderId = "№" + Math.floor(100000 + Math.random() * 900000); 
+        const orderId = "#" + Math.floor(100000 + Math.random() * 900000); 
         let orderList = "";
         let itemsHtml = "";
 
@@ -207,7 +231,7 @@
         }
 
         const total = document.getElementById('total').innerText;
-        const message = `ЗАКАЗ ${orderId}\nКлиент: ${name}\nТел: ${phone}\nДата: ${date}\nВремя: ${time}\n\n${orderList}\nИТОГО: ${total} BYN`;
+        const message = `🍖 ЗАКАЗ ${orderId}\n━━━━━━━━━━━━━\n👤 Клиент: ${name}\n📞 Тел: ${phone}\n📅 Дата: ${date}\n⏰ Время: ${time}\n💬 Коммент: ${comm}\n━━━━━━━━━━━━━\n🛒 Заказ:\n${orderList}\n💰 ИТОГО: ${total} BYN`;
 
         const token = "8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0";
         const chatId = "-1003698576143";
@@ -219,17 +243,15 @@
                 body: JSON.stringify({ chat_id: chatId, text: message })
             });
 
-            // Показываем экран чека
             document.getElementById('modal').style.display = 'none';
             document.getElementById('success-screen').style.display = 'block';
-            
             document.getElementById('res-id').innerText = orderId;
             document.getElementById('res-items').innerHTML = itemsHtml;
             document.getElementById('res-total').innerText = total + " BYN";
             document.getElementById('res-date').innerText = date;
             document.getElementById('res-time').innerText = time;
 
-        } catch (e) { alert("Ошибка!"); }
+        } catch (e) { alert("Ошибка соединения!"); }
     }
 
     renderMenu();
