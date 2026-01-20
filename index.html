@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ДОБРО — Мясная Мануфактура</title>
+    <title>ДОБРО</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -32,24 +32,21 @@
             -webkit-text-size-adjust: 100%;
         }
 
-        body.modal-open { overflow: hidden; } /* Блокировка скролла */
+        body.modal-open { overflow: hidden; }
 
         header { padding: 50px 0 30px; }
         
         .logo { 
-            font-weight: 900; font-size: 2.6rem; letter-spacing: -1.5px; margin: 0; 
+            font-weight: 900; font-size: 2.8rem; letter-spacing: -1.5px; margin: 0; 
             background: linear-gradient(180deg, #333 0%, #000 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             text-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
-        .tagline { color: var(--gray); font-size: 0.95rem; font-weight: 500; margin-top: 5px; letter-spacing: -0.3px; }
 
         /* Категории */
         .categories {
             display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px;
             position: sticky; top: 0; z-index: 100; scrollbar-width: none;
-            mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
         }
         .categories::-webkit-scrollbar { display: none; }
         
@@ -130,7 +127,6 @@
 
 <header>
     <h1 class="logo">ДОБРО</h1>
-    <div class="tagline">Мясная мануфактура</div>
 </header>
 
 <div class="categories">
@@ -157,11 +153,13 @@
         <h2 style="margin: 0 0 25px; font-weight: 800; font-size: 1.8rem;">Ваш заказ</h2>
         <input type="text" id="name" placeholder="Ваше имя">
         <input type="tel" id="phone" value="+375 ">
+        
         <div style="display:flex; gap:12px;">
-            <input type="date" id="date" style="flex:1;">
-            <input type="time" id="time" style="flex:1;">
+            <input type="date" id="date" style="flex:1;" onchange="validateTimeInput()">
+            <input type="time" id="time" style="flex:1;" onchange="validateTimeInput()">
         </div>
-        <textarea id="comment" placeholder="Адрес доставки и комментарий" rows="3"></textarea>
+        
+        <textarea id="comment" placeholder="Комментарий" rows="3"></textarea>
         <button class="big-btn" onclick="sendToTelegram()">Отправить заказ</button>
     </div>
 </div>
@@ -181,6 +179,8 @@
 </style>
 
 <script>
+    // step: 0.5 позволяет выбирать 0.5, 1.0, 1.5 и т.д.
+    // step: 1 позволяет выбирать только целые числа 1, 2, 3...
     const products = [
         { n: "Рёбрышки BBQ пластинки", p: 43, u: "кг", c: "Акция", promo: true, step: 0.5 },
         { n: "Половинка курочки (~1кг)", p: 24, u: "шт", c: "Акция", promo: true, step: 1 },
@@ -200,7 +200,6 @@
     let cart = {};
     let currentCategory = "Все";
 
-    // Маска телефона
     document.getElementById('phone').addEventListener('input', function (e) {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[2] && e.target.value.length < 5) { e.target.value = '+375 '; return; }
@@ -267,29 +266,60 @@
         t > 0 ? panel.classList.remove('empty') : panel.classList.add('empty');
     }
 
+    function checkWorkingHours(checkDate = new Date()) {
+        const day = checkDate.getDay(); 
+        const hour = checkDate.getHours();
+
+        if (day === 0) return { ok: false, msg: "В воскресенье у нас выходной!" };
+        if (day === 6) {
+            if (hour >= 10 && hour < 17) return { ok: true };
+            return { ok: false, msg: "В субботу работаем с 10:00 до 17:00" };
+        }
+        if (hour >= 10 && hour < 18) return { ok: true };
+        return { ok: false, msg: "В будние работаем с 10:00 до 18:00" };
+    }
+
+    function validateTimeInput() {
+        const dateVal = document.getElementById('date').value;
+        const timeVal = document.getElementById('time').value;
+        if (!dateVal || !timeVal) return;
+        const selectedDate = new Date(dateVal + 'T' + timeVal);
+        const check = checkWorkingHours(selectedDate);
+        if (!check.ok) {
+            alert("⚠️ " + check.msg);
+            document.getElementById('time').value = ""; 
+        }
+    }
+
     function toggleModal(s) { 
+        if (s) {
+            const check = checkWorkingHours(new Date());
+            if (!check.ok) {
+                alert("💤 Мы сейчас закрыты!\n\n" + check.msg + "\n\nНо вы можете оставить заявку на завтра.");
+            }
+        }
         document.getElementById('modal').style.display = s ? 'block' : 'none'; 
         document.body.classList.toggle('modal-open', s);
     }
 
-    // Безопасность текста для Telegram
     function escapeHtml(text) {
         if (!text) return text;
-        return text.replace(/&/g, "&amp;")
-                   .replace(/</g, "&lt;")
-                   .replace(/>/g, "&gt;")
-                   .replace(/"/g, "&quot;")
-                   .replace(/'/g, "&#039;");
+        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     async function sendToTelegram() {
         const name = escapeHtml(document.getElementById('name').value);
         const phone = escapeHtml(document.getElementById('phone').value);
-        const date = escapeHtml(document.getElementById('date').value);
-        const time = escapeHtml(document.getElementById('time').value);
+        const dateVal = document.getElementById('date').value;
+        const timeVal = document.getElementById('time').value;
         const comment = escapeHtml(document.getElementById('comment').value);
 
         if(!name || phone.length < 18) return alert("Пожалуйста, заполните Имя и Телефон");
+        if(!dateVal || !timeVal) return alert("Выберите дату и время доставки");
+
+        const selectedDate = new Date(dateVal + 'T' + timeVal);
+        const check = checkWorkingHours(selectedDate);
+        if (!check.ok) return alert("⛔️ " + check.msg + "\nПожалуйста, выберите рабочее время.");
 
         let orderTxt = "";
         for (let n in cart) {
@@ -304,7 +334,7 @@
 
 👤 <b>Клиент:</b> ${name}
 📞 <b>Телефон:</b> ${phone}
-📅 <b>Время:</b> ${date} в ${time}
+📅 <b>Время:</b> ${dateVal} в ${timeVal}
 💬 <b>Комментарий:</b> ${comment || '-'}
 
 🛒 <b>КОРЗИНА:</b>
@@ -320,11 +350,7 @@ ${orderTxt}
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    chat_id: "-1003698576143", 
-                    text: message,
-                    parse_mode: "HTML"
-                })
+                body: JSON.stringify({ chat_id: "-1003698576143", text: message, parse_mode: "HTML" })
             });
             document.getElementById('modal').style.display = 'none';
             document.getElementById('success-screen').style.display = 'block';
@@ -340,10 +366,9 @@ ${orderTxt}
         }
     }
 
-    // Инициализация даты и времени
     const now = new Date();
+    document.getElementById('date').min = now.toISOString().split("T")[0];
     document.getElementById('date').valueAsDate = now;
-    // Добавляем 40 минут к текущему времени
     now.setMinutes(now.getMinutes() + 40);
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
