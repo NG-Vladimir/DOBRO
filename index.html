@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ДОБРО v2.4</title>
+    <title>ДОБРО v2.5</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -11,9 +11,8 @@
             --bg: #f2f2f7;
             --card: #ffffff;
             --text: #000000;
-            --gray: #8e8e93;
-            --accent: #007aff; /* Синий акцент как в iOS для фокуса */
-            --border: #e5e5ea;
+            --gray: #6e6e73; /* Сделал чуть темнее для читаемости */
+            --border: #d1d1d6;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -23,7 +22,6 @@
             background: var(--bg);
             color: var(--text);
             margin: 0; padding: 0 12px 180px;
-            overflow-x: hidden;
         }
 
         header { padding: 30px 4px 10px; }
@@ -43,13 +41,12 @@
         }
         .cat-btn.active { background: #000; color: #fff; border-color: #000; }
 
-        .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; color: var(--gray); }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; color: #8e8e93; }
 
         .item { 
             background: var(--card); border-radius: 18px; padding: 16px; 
             margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
         }
-        .item-info { flex: 1; }
         .item-name { font-weight: 700; font-size: 0.95rem; display: block; margin-bottom: 4px; }
         .item-price { font-weight: 700; font-size: 0.95rem; }
 
@@ -69,41 +66,31 @@
         .checkout-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 12px; border: none; font-weight: 800; }
 
         /* ИСПРАВЛЕННОЕ МОДАЛЬНОЕ ОКНО */
-        #modal { 
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; 
-            overflow-y: auto; /* Позволяет всему экрану скроллиться */
-        }
-        .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; overflow-y: auto; }
+        .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
         
         .modal-content { 
-            position: relative; /* Не absolute, чтобы скроллилось */
-            margin-top: 15vh; /* Отступ сверху, чтобы окно было посередине/внизу */
-            width: 100%; background: #fff;
-            padding: 30px 20px 100px; /* Большой отступ снизу, чтобы клавиатура не закрывала кнопку */
-            border-radius: 24px 24px 0 0; 
-            min-height: 85vh;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            position: relative; margin-top: 10vh; width: 100%; background: #fff;
+            padding: 25px 20px 120px; border-radius: 24px 24px 0 0; 
+            min-height: 90vh; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
         }
 
-        .input-box { margin-bottom: 16px; }
-        .input-box label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; }
+        .input-box { margin-bottom: 18px; } /* Увеличил отступ между полями */
+        .input-box label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gray); margin-bottom: 8px; text-transform: uppercase; }
         
         input, textarea { 
             width: 100%; padding: 16px; 
-            background: #f2f2f7; border: 2px solid transparent; 
+            background: #f2f2f7; border: 2px solid #efefef; 
             border-radius: 14px; font-size: 16px; 
-            font-family: inherit; color: #000 !important; /* Текст теперь всегда черный */
-            opacity: 1 !important;
+            font-family: inherit; color: #000 !important; font-weight: 500;
         }
-        input:focus, textarea:focus { border-color: var(--accent); background: #fff; outline: none; }
+        input:focus { border-color: #000; background: #fff; outline: none; }
 
-        .row { display: flex; gap: 10px; }
-        .row > div { flex: 1; }
-
+        /* УБРАЛ ROW (теперь дата и время друг под другом для фикса наезда) */
         .big-btn { 
             background: #000; color: #fff; width: 100%; 
             padding: 18px; border-radius: 16px; border: none; 
-            font-weight: 700; font-size: 1.1rem; margin-top: 10px; 
+            font-weight: 700; font-size: 1.1rem; margin-top: 20px; 
         }
 
         #success-screen { 
@@ -137,11 +124,11 @@
     <div class="modal-blur" onclick="toggleModal(false)"></div>
     <div class="modal-content">
         <div style="width: 40px; height: 4px; background: #e5e5ea; border-radius: 10px; margin: -10px auto 20px;"></div>
-        <h2 style="margin: 0 0 20px; font-weight: 900; font-size: 1.6rem;">Оформление</h2>
+        <h2 style="margin: 0 0 25px; font-weight: 900; font-size: 1.6rem;">Оформление</h2>
         
         <div class="input-box">
             <label>Ваше имя</label>
-            <input type="text" id="name" placeholder="Как вас зовут?">
+            <input type="text" id="name" placeholder="Введите имя">
         </div>
 
         <div class="input-box">
@@ -149,31 +136,31 @@
             <input type="tel" id="phone" value="+375 ">
         </div>
         
-        <div class="row">
-            <div class="input-box">
-                <label>Дата</label>
-                <input type="date" id="date">
-            </div>
-            <div class="input-box">
-                <label>Время</label>
-                <input type="text" id="time" placeholder="12:00" inputmode="decimal">
-            </div>
+        <div class="input-box">
+            <label>Дата доставки</label>
+            <input type="date" id="date">
+        </div>
+
+        <div class="input-box">
+            <label>Время доставки</label>
+            <input type="text" id="time" placeholder="Пример: 14:30" inputmode="decimal">
         </div>
         
         <div class="input-box">
-            <label>Комментарий к заказу</label>
-            <textarea id="comment" placeholder="Маринад, разделка и др. пожелания" rows="3"></textarea>
+            <label>Комментарий</label>
+            <textarea id="comment" placeholder="Маринад, разделка и др." rows="3"></textarea>
         </div>
 
-        <button class="big-btn" onclick="sendToTelegram()">Отправить заказ</button>
-        <div style="height: 50px;"></div> </div>
+        <button class="big-btn" onclick="sendToTelegram()">Заказать мясо</button>
+        <div style="height: 100px;"></div> 
+    </div>
 </div>
 
 <div id="success-screen">
     <div style="font-size: 5rem;">🥩</div>
     <h2 style="font-weight: 900;">Заказ принят!</h2>
-    <p style="color: var(--gray);">Мы получили ваш заказ и скоро свяжемся.</p>
-    <button class="big-btn" style="width: 220px;" onclick="tg.close()">Закрыть</button>
+    <p style="color: var(--gray);">Скоро свяжемся с вами.</p>
+    <button class="big-btn" style="width: 200px;" onclick="tg.close()">Ок</button>
 </div>
 
 <script>
@@ -268,7 +255,6 @@
 
     function toggleModal(s) { 
         document.getElementById('modal').style.display = s ? 'block' : 'none'; 
-        // Если открываем, прокручиваем в начало формы
         if(s) window.scrollTo(0,0);
     }
 
@@ -292,6 +278,10 @@
         const message = `🧾 ЗАКАЗ\n\n👤 Клиент: ${name}\n🔗 Профиль: ${tgLink}\n📞 Тел: ${phone}\n📅 Когда: ${dateVal} в ${timeVal}\n💬 Инфо: ${comment || '-'}\n\n🛒 КОРЗИНА:\n${orderTxt}\n💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
         
         try {
+            const btn = document.querySelector('.big-btn');
+            btn.innerText = 'Отправка...';
+            btn.disabled = true;
+
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
@@ -299,7 +289,12 @@
             });
             document.getElementById('success-screen').style.display = 'flex';
             tg.HapticFeedback.notificationOccurred('success');
-        } catch (e) { alert("Ошибка!"); }
+        } catch (e) { 
+            alert("Ошибка!"); 
+            const btn = document.querySelector('.big-btn');
+            btn.innerText = 'Заказать мясо';
+            btn.disabled = false;
+        }
     }
 
     document.getElementById('date').valueAsDate = new Date();
