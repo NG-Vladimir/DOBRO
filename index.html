@@ -3,45 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ДОБРО v3.1 — Full Menu</title>
+    <title>ДОБРО | Premium Meat</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #f2f2f7; --card: #ffffff; --text: #000000; --gray: #6e6e73; --border: #d1d1d6; }
+        :root { 
+            /* Палитра "Нежная свежесть" */
+            --primary: #FF6B6B; /* Теплый коралл */
+            --primary-soft: #FFE3E3; 
+            --bg: #F7F8FA; /* Очень светлый серо-голубой */
+            --card: #FFFFFF;
+            --text-main: #2D3436;
+            --text-sec: #636E72;
+            --border: #F0F2F5;
+            --shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.08);
+            --radius: 20px;
+        }
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0 12px 180px; }
-        header { padding: 30px 4px 10px; }
-        .logo { font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
-        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; position: sticky; top: 0; z-index: 100; background: var(--bg); scrollbar-width: none; }
-        .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { background: #fff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 100px; white-space: nowrap; font-size: 0.85rem; font-weight: 600; }
-        .cat-btn.active { background: #000; color: #fff; border-color: #000; }
-        .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; color: #8e8e93; }
-        .item { background: var(--card); border-radius: 18px; padding: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .item-name { font-weight: 700; font-size: 0.95rem; display: block; margin-bottom: 4px; }
-        .item-price { font-weight: 700; font-size: 0.95rem; }
-        .counter { display: flex; align-items: center; gap: 4px; background: #f2f2f7; padding: 4px; border-radius: 12px; }
-        .btn-c { background: transparent; border: none; font-size: 1.2rem; font-weight: 600; padding: 4px 10px; }
-        .count-val { font-weight: 700; min-width: 20px; text-align: center; }
-        .btn-plus-init { background: #000; color: #fff; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; }
-        .footer-cart { position: fixed; bottom: 20px; left: 12px; right: 12px; background: #1c1c1e; padding: 16px 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; z-index: 999; color: #fff; }
-        .footer-cart.empty { display: none; }
-        .checkout-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 12px; border: none; font-weight: 800; }
+        
+        body { 
+            font-family: 'Manrope', sans-serif; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0 16px 140px; 
+            -webkit-font-smoothing: antialiased;
+        }
 
+        /* HEADER */
+        header { padding: 40px 4px 20px; text-align: left; }
+        .logo { 
+            font-weight: 800; font-size: 2.4rem; letter-spacing: -1px; margin: 0; 
+            background: linear-gradient(45deg, #2D3436 0%, #FF6B6B 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle { color: var(--text-sec); font-size: 0.95rem; font-weight: 500; margin-top: 5px; }
+
+        /* CATEGORIES */
+        .categories { 
+            display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 20px; 
+            position: sticky; top: 0; z-index: 100; background: var(--bg); 
+            /* Маска для плавного исчезновения сбоку */
+            mask-image: linear-gradient(to right, black 90%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
+            scrollbar-width: none; 
+        }
+        .categories::-webkit-scrollbar { display: none; }
+        
+        .cat-btn { 
+            background: var(--card); border: 1px solid transparent; 
+            padding: 10px 20px; border-radius: 100px; 
+            white-space: nowrap; font-size: 0.9rem; font-weight: 700; color: var(--text-sec);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .cat-btn.active { 
+            background: var(--primary); color: #fff; 
+            box-shadow: 0 8px 20px -5px rgba(255, 107, 107, 0.5); 
+            transform: translateY(-2px);
+        }
+
+        /* ITEMS */
+        .section-title { font-size: 1.2rem; font-weight: 800; margin: 20px 4px 12px; color: var(--text-main); }
+        
+        .item { 
+            background: var(--card); border-radius: var(--radius); padding: 18px; 
+            margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: var(--shadow); border: 1px solid white;
+        }
+        .item-info { flex: 1; padding-right: 15px; }
+        .item-name { font-weight: 700; font-size: 1rem; display: block; margin-bottom: 6px; line-height: 1.3; }
+        .item-price { font-weight: 800; font-size: 1.05rem; color: var(--primary); }
+        .item-price span { color: var(--text-sec); font-size: 0.85rem; font-weight: 500; }
+
+        /* BUTTONS */
+        .counter { display: flex; align-items: center; gap: 8px; background: var(--bg); padding: 5px; border-radius: 14px; }
+        .btn-c { background: #fff; border: none; width: 32px; height: 32px; border-radius: 10px; font-weight: 700; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .count-val { font-weight: 700; min-width: 20px; text-align: center; }
+        
+        .btn-plus-init { 
+            background: var(--primary-soft); color: var(--primary); border: none; 
+            padding: 12px 20px; border-radius: 14px; font-weight: 700; font-size: 0.9rem;
+            transition: 0.2s;
+        }
+        .btn-plus-init:active { transform: scale(0.95); }
+
+        /* CART PANEL */
+        .footer-cart { 
+            position: fixed; bottom: 20px; left: 16px; right: 16px; 
+            background: #2D3436; padding: 18px 24px; border-radius: 24px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            z-index: 999; color: #fff; box-shadow: 0 15px 40px -10px rgba(45, 52, 54, 0.3);
+            transition: 0.4s cubic-bezier(0.3, 1.5, 0.4, 1);
+        }
+        .footer-cart.empty { transform: translateY(150%); opacity: 0; }
+        .checkout-btn { 
+            background: var(--primary); color: #fff; 
+            padding: 12px 24px; border-radius: 16px; border: none; 
+            font-weight: 700; font-size: 0.95rem; 
+        }
+
+        /* MODAL */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; overflow-y: auto; }
-        .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
-        .modal-content { position: relative; margin-top: 5vh; width: 100%; background: #fff; padding: 25px 20px 150px; border-radius: 24px 24px 0 0; min-height: 95vh; }
-        .input-box { margin-bottom: 15px; }
-        .input-box label { display: block; font-size: 0.75rem; font-weight: 800; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; }
-        input, textarea { width: 100%; padding: 16px; background: #f2f2f7; border: 2px solid #efefef; border-radius: 14px; font-size: 16px; font-family: inherit; color: #000 !important; font-weight: 600; -webkit-appearance: none; }
-        input:focus { border-color: #000; background: #fff; outline: none; }
-        .big-btn { background: #000; color: #fff; width: 100%; padding: 18px; border-radius: 16px; border: none; font-weight: 700; font-size: 1.1rem; margin-top: 10px; }
+        .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(45, 52, 54, 0.4); backdrop-filter: blur(12px); }
+        .modal-content { 
+            position: relative; margin-top: 10vh; width: 100%; background: #fff; 
+            padding: 30px 24px 150px; border-radius: 32px 32px 0 0; min-height: 90vh; 
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .modal-drag-line { width: 50px; height: 5px; background: #E2E4E8; border-radius: 10px; margin: -10px auto 25px; }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--text-sec); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        input, textarea { 
+            width: 100%; padding: 18px; background: var(--bg); border: 2px solid transparent; 
+            border-radius: 18px; font-size: 16px; font-family: inherit; 
+            color: var(--text-main); font-weight: 600; transition: 0.2s;
+            -webkit-appearance: none;
+        }
+        input:focus, textarea:focus { border-color: var(--primary); background: #fff; outline: none; box-shadow: 0 0 0 4px var(--primary-soft); }
+
+        /* Стиль для календаря на iOS */
+        input[type="date"] {
+            display: block;
+            -webkit-appearance: none;
+            min-height: 56px; /* Чтобы удобно нажимать */
+        }
+
+        .big-btn { 
+            background: var(--primary); color: #fff; width: 100%; 
+            padding: 20px; border-radius: 20px; border: none; 
+            font-weight: 800; font-size: 1.1rem; margin-top: 15px; 
+            box-shadow: 0 10px 25px -5px rgba(255, 107, 107, 0.4);
+            transition: transform 0.2s;
+        }
+        .big-btn:active { transform: scale(0.98); }
+
         #success-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 3000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     </style>
 </head>
 <body>
 
-<header><h1 class="logo">ДОБРО</h1></header>
+<header>
+    <h1 class="logo">ДОБРО</h1>
+    <div class="subtitle">Фермерское мясо с душой</div>
+</header>
 
 <div class="categories">
     <button class="cat-btn active" onclick="filterMenu('Все')">Все</button>
@@ -55,54 +163,84 @@
 
 <div class="footer-cart empty" id="cart-panel">
     <div>
-        <div style="font-size: 0.75rem; opacity: 0.6;">Сумма</div>
-        <div style="font-weight: 800; font-size: 1.3rem;"><span id="total">0</span> BYN</div>
+        <div style="font-size: 0.8rem; opacity: 0.7;">Итого к оплате</div>
+        <div style="font-weight: 800; font-size: 1.4rem;"><span id="total">0</span> BYN</div>
     </div>
-    <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
+    <button class="checkout-btn" onclick="toggleModal(true)">К заказу ➝</button>
 </div>
 
 <div id="modal">
     <div class="modal-blur" onclick="toggleModal(false)"></div>
     <div class="modal-content">
-        <h2 style="margin: 0 0 20px; font-weight: 900; font-size: 1.6rem;">Оформление</h2>
-        <div class="input-box"><label>Ваше имя</label><input type="text" id="name"></div>
-        <div class="input-box"><label>Телефон</label><input type="tel" id="phone" value="+375 "></div>
-        <div class="input-box"><label>Дата (дд.мм.гггг)</label><input type="text" id="date" placeholder="21.01.2026" inputmode="decimal"></div>
-        <div class="input-box"><label>Время (чч:мм)</label><input type="text" id="time" placeholder="14:30" inputmode="decimal"></div>
-        <div class="input-box"><label>Комментарий</label><textarea id="comment" rows="2" placeholder="Пожелания"></textarea></div>
-        <button class="big-btn" onclick="sendToTelegram()">Заказать мясо</button>
+        <div class="modal-drag-line"></div>
+        <h2 style="margin: 0 0 25px; font-weight: 800; font-size: 1.8rem; color: var(--text-main);">Оформление</h2>
+        
+        <div class="input-group">
+            <label>Как к вам обращаться?</label>
+            <input type="text" id="name" placeholder="Иван">
+        </div>
+        
+        <div class="input-group">
+            <label>Ваш телефон</label>
+            <input type="tel" id="phone" value="+375 ">
+        </div>
+        
+        <div class="input-group">
+            <label>Дата получения</label>
+            <input type="date" id="date">
+        </div>
+
+        <div class="input-group">
+            <label>Желаемое время</label>
+            <input type="text" id="time" placeholder="14:00" inputmode="decimal">
+        </div>
+        
+        <div class="input-group">
+            <label>Комментарий</label>
+            <textarea id="comment" rows="2" placeholder="Нарезка, маринад, пожелания..."></textarea>
+        </div>
+        
+        <button class="big-btn" onclick="sendToTelegram()">Подтвердить заказ</button>
     </div>
 </div>
 
 <div id="success-screen">
-    <div style="font-size: 5rem;">🥩</div>
-    <h2 style="font-weight: 900;">Заказ принят!</h2>
-    <p>Чек отправлен в личные сообщения бота.</p>
-    <button class="big-btn" style="width: 200px;" onclick="tg.close()">Ок</button>
+    <div style="font-size: 6rem; margin-bottom: 10px;">🥩</div>
+    <h2 style="font-weight: 900; font-size: 2rem; color: var(--text-main);">Заказ принят!</h2>
+    <p style="color: var(--text-sec); margin-bottom: 30px;">Проверьте личные сообщения<br>от нашего бота.</p>
+    <button class="big-btn" style="width: 200px; background: var(--text-main);" onclick="tg.close()">Закрыть</button>
 </div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
     tg.ready();
+    // Красим шапку телеграма в цвет фона
+    tg.headerColor = '#F7F8FA';
+    tg.backgroundColor = '#F7F8FA';
 
     if (tg.initDataUnsafe?.user) {
         document.getElementById('name').value = tg.initDataUnsafe.user.first_name || "";
     }
 
-    // ПОЛНЫЙ СПИСОК ТОВАРОВ
+    // УСТАНОВКА ДАТЫ ПО УМОЛЧАНИЮ (СЕГОДНЯ)
+    const dateInput = document.getElementById('date');
+    const today = new Date();
+    // Формат YYYY-MM-DD для input type="date"
+    const formattedDate = today.toISOString().split('T')[0];
+    dateInput.min = formattedDate; // Нельзя выбрать прошлое
+    dateInput.value = formattedDate; // По умолчанию сегодня
+
     const products = [
-        { n: "Рёбрышки BBQ пластинки", p: 43, u: "кг", c: "Акция", step: 0.5 },
-        { n: "Половинка курочки (~1кг)", p: 24, u: "шт", c: "Акция", step: 1 },
-        { n: "Говядина рваная", p: 95, u: "кг", c: "Говядина", step: 0.5 },
+        { n: "Рёбрышки BBQ", p: 43, u: "кг", c: "Акция", step: 0.5 },
+        { n: "Фермерская курочка", p: 24, u: "шт", c: "Акция", step: 1 },
+        { n: "Говядина мякоть", p: 95, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Говяжий язык", p: 90, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Говяжьи щечки", p: 105, u: "кг", c: "Говядина", step: 0.5 },
-        { n: "Рваная Свинина BBQ", p: 80, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Буженина (шея)", p: 85, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Рёбрышки мясные", p: 65, u: "кг", c: "Свинина", step: 0.5 },
+        { n: "Свинина BBQ", p: 80, u: "кг", c: "Свинина", step: 0.5 },
+        { n: "Буженина домашняя", p: 85, u: "кг", c: "Свинина", step: 0.5 },
         { n: "Рулька томленая", p: 55, u: "шт", c: "Свинина", step: 1 },
-        { n: "Индейка бедро", p: 70, u: "кг", c: "Птица", step: 0.5 },
-        { n: "Курочка половинка", p: 24, u: "шт", c: "Птица", step: 1 },
+        { n: "Индейка филе", p: 70, u: "кг", c: "Птица", step: 0.5 },
         { n: "Утка с яблоками", p: 75, u: "кг", c: "Птица", step: 0.5 },
         { n: "Колбаски куриные", p: 60, u: "кг", c: "Птица", step: 0.5 }
     ];
@@ -110,17 +248,13 @@
     let cart = {};
     let currentCategory = "Все";
 
-    // Маски
-    const applyMask = (id, len, step1) => {
-        document.getElementById(id).addEventListener('input', e => {
-            let v = e.target.value.replace(/\D/g, '').slice(0, len);
-            if (v.length > step1) v = v.slice(0, step1) + (id==='date'?'.':':') + v.slice(step1);
-            if (id==='date' && v.length > 5) v = v.slice(0, 5) + '.' + v.slice(5);
-            e.target.value = v;
-        });
-    };
-    applyMask('time', 4, 2); 
-    applyMask('date', 8, 2);
+    // Маска времени (авто двоеточие)
+    document.getElementById('time').addEventListener('input', e => {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 4) v = v.slice(0, 4);
+        if (v.length >= 3) e.target.value = v.slice(0, 2) + ':' + v.slice(2);
+        else e.target.value = v;
+    });
 
     document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
@@ -144,7 +278,23 @@
                 menu.innerHTML += `<div class="section-title">${cat}</div>`;
                 filtered.forEach(item => {
                     const count = cart[item.n] || 0;
-                    menu.innerHTML += `<div class="item"><div class="item-info"><span class="item-name">${item.n}</span><span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span></div><div>${count === 0 ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>` : `<div class="counter"><button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button><span class="count-val">${count}</span><button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button></div>`}</div></div>`;
+                    menu.innerHTML += `
+                    <div class="item">
+                        <div class="item-info">
+                            <span class="item-name">${item.n}</span>
+                            <span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span>
+                        </div>
+                        <div>
+                            ${count === 0 
+                                ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">В корзину</button>` 
+                                : `<div class="counter">
+                                    <button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button>
+                                    <span class="count-val">${count}</span>
+                                    <button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button>
+                                   </div>`
+                            }
+                        </div>
+                    </div>`;
                 });
             }
         });
@@ -161,55 +311,76 @@
     function updateTotal() {
         let t = 0; Object.keys(cart).forEach(n => t += cart[n] * products.find(x => x.n === n).p);
         document.getElementById('total').innerText = t.toFixed(1).replace('.0', '');
-        document.getElementById('cart-panel').classList.toggle('empty', t === 0);
+        const panel = document.getElementById('cart-panel');
+        if (t > 0) {
+            panel.classList.remove('empty');
+            panel.style.opacity = "1";
+        } else {
+            panel.classList.add('empty');
+        }
     }
 
-    function toggleModal(s) { document.getElementById('modal').style.display = s ? 'block' : 'none'; }
+    function toggleModal(s) { 
+        document.getElementById('modal').style.display = s ? 'block' : 'none'; 
+        if (s) { 
+            window.scrollTo(0,0);
+            tg.HapticFeedback.impactOccurred('medium');
+        }
+    }
 
-    // ПРОВЕРКА РАБОЧЕГО ВРЕМЕНИ
+    // ПРОВЕРКА РАБОЧЕГО ВРЕМЕНИ (ДЛЯ НОВОГО ФОРМАТА ДАТЫ YYYY-MM-DD)
     function isWorkingTime(dateStr, timeStr) {
-        const dParts = dateStr.split('.');
+        // dateStr приходит как 2026-01-21
+        const dParts = dateStr.split('-'); 
         const tParts = timeStr.split(':');
-        if (dParts.length !== 3 || tParts.length !== 2) return { ok: false, msg: "Неверный формат даты/времени" };
+        
+        // Создаем дату (Месяцы в JS идут от 0 до 11)
+        const dt = new Date(dParts[0], dParts[1] - 1, dParts[2], tParts[0], tParts[1]);
+        
+        if (isNaN(dt.getTime())) return { ok: false, msg: "Выберите корректную дату и время" };
 
-        const dt = new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1]);
-        if (isNaN(dt.getTime())) return { ok: false, msg: "Некорректная дата" };
-
-        const day = dt.getDay(); 
+        const day = dt.getDay(); // 0 - Вс, 6 - Сб
         const hour = dt.getHours();
 
-        if (day === 0) return { ok: false, msg: "В воскресенье у нас выходной!" };
+        if (day === 0) return { ok: false, msg: "В воскресенье мы отдыхаем! 😴" };
         if (day === 6) {
             if (hour >= 10 && hour < 17) return { ok: true };
             return { ok: false, msg: "В субботу работаем с 10:00 до 17:00" };
         }
         if (hour >= 10 && hour < 18) return { ok: true };
-        return { ok: false, msg: "В будние работаем с 10:00 до 18:00" };
+        return { ok: false, msg: "В будние дни ждем вас с 10:00 до 18:00" };
     }
 
     async function sendToTelegram() {
         const name = document.getElementById('name').value;
         const phone = document.getElementById('phone').value;
-        const date = document.getElementById('date').value;
+        const date = document.getElementById('date').value; // Формат YYYY-MM-DD
         const time = document.getElementById('time').value;
         const comment = document.getElementById('comment').value;
 
-        if(!name || phone.length < 18 || date.length < 10 || time.length < 5) return alert("Заполните корректно все поля!");
+        if(!name || phone.length < 18 || !date || time.length < 5) return alert("Пожалуйста, заполните все данные!");
 
         const check = isWorkingTime(date, time);
-        if (!check.ok) return alert("⛔️ " + check.msg + "\nПожалуйста, выберите рабочее время.");
+        if (!check.ok) {
+            tg.HapticFeedback.notificationOccurred('error');
+            return alert("⛔️ " + check.msg);
+        }
 
         const user = tg.initDataUnsafe?.user;
         const orderId = Math.floor(1000 + Math.random() * 9000);
         const total = document.getElementById('total').innerText;
         let orderTxt = ""; Object.keys(cart).forEach(n => orderTxt += `— ${n} (${cart[n]} ${products.find(x=>x.n===n).u})\n`);
 
-        const adminMsg = `🧾 ЗАКАЗ №${orderId}\n\n👤 Имя: ${name}\n🔗 Профиль: @${user?.username || 'none'}\n📞 Тел: ${phone}\n📅 Когда: ${date} в ${time}\n💬 Инфо: ${comment || '-'}\n🛒 Заказ:\n${orderTxt}\n💰 Итого: ${total} BYN`;
-        const clientMsg = `✅ <b>Ваш заказ №${orderId} принят!</b>\n\n💰 <b>Сумма:</b> ${total} BYN\n📅 <b>Время:</b> ${date} в ${time}\n\nСпасибо за заказ! 🥩`;
+        // Форматируем дату обратно в красивый вид для чека
+        const niceDate = date.split('-').reverse().join('.');
+
+        const adminMsg = `🧾 <b>ЗАКАЗ №${orderId}</b>\n\n👤 <b>Клиент:</b> ${name}\n🔗 <b>ТГ:</b> @${user?.username || 'скрыт'}\n📞 <b>Тел:</b> ${phone}\n📅 <b>Дата:</b> ${niceDate} в ${time}\n💬 <b>Инфо:</b> ${comment || '-'}\n\n🛒 <b>КОРЗИНА:</b>\n${orderTxt}\n💰 <b>ИТОГО: ${total} BYN</b>`;
+        
+        const clientMsg = `✅ <b>Заказ №${orderId} оформлен!</b>\n\n💰 Сумма: <b>${total} BYN</b>\n📅 Ждем вас: <b>${niceDate} к ${time}</b>\n\nСпасибо, что выбрали ДОБРО! 🥩❤️`;
 
         try {
             const btn = document.querySelector('.big-btn');
-            btn.innerText = 'Отправка...';
+            btn.innerText = 'Отправляем...';
             btn.disabled = true;
 
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
@@ -225,10 +396,10 @@
             document.getElementById('success-screen').style.display = 'flex';
             tg.HapticFeedback.notificationOccurred('success');
         } catch (e) { 
-            alert("Ошибка сети! Но заказ мог быть отправлен."); 
+            alert("Ошибка сети. Но заказ мог пройти."); 
             const btn = document.querySelector('.big-btn');
             btn.disabled = false;
-            btn.innerText = 'Заказать мясо';
+            btn.innerText = 'Подтвердить заказ';
         }
     }
     renderMenu();
