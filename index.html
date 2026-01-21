@@ -150,8 +150,11 @@
         <input type="tel" id="phone" value="+375 ">
         
         <div style="display:flex; gap:12px;">
-            <input type="date" id="date" style="flex:1;" onchange="validateTimeInput()">
-            <input type="time" id="time" style="flex:1;" onchange="validateTimeInput()">
+            <input type="date" id="date" style="flex:1.2;" onchange="validateTimeInput()">
+            <input type="text" id="time" style="flex:0.8;" 
+                   placeholder="12:00" 
+                   inputmode="decimal" 
+                   onchange="validateTimeInput()">
         </div>
         
         <textarea id="comment" placeholder="Комментарий" rows="3"></textarea>
@@ -193,10 +196,22 @@
     let cart = {};
     let currentCategory = "Все";
 
+    // Маска для телефона
     document.getElementById('phone').addEventListener('input', function (e) {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[2] && e.target.value.length < 5) { e.target.value = '+375 '; return; }
         e.target.value = !x[3] ? '+375 (' + x[2] : '+375 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+    });
+
+    // НОВОЕ: Маска для ввода времени (ЧЧ:ММ)
+    document.getElementById('time').addEventListener('input', function (e) {
+        let v = e.target.value.replace(/\D/g, '');
+        if (v.length > 4) v = v.slice(0, 4);
+        if (v.length >= 3) {
+            e.target.value = v.slice(0, 2) + ':' + v.slice(2);
+        } else {
+            e.target.value = v;
+        }
     });
 
     function filterMenu(cat) {
@@ -275,8 +290,12 @@
     function validateTimeInput() {
         const dateVal = document.getElementById('date').value;
         const timeVal = document.getElementById('time').value;
-        if (!dateVal || !timeVal) return;
+        if (!dateVal || timeVal.length < 5) return;
+        
         const selectedDate = new Date(dateVal + 'T' + timeVal);
+        // Проверка на корректность даты
+        if (isNaN(selectedDate.getTime())) return;
+
         const check = checkWorkingHours(selectedDate);
         if (!check.ok) {
             alert("⚠️ " + check.msg);
@@ -308,7 +327,7 @@
         const comment = escapeHtml(document.getElementById('comment').value);
 
         if(!name || phone.length < 18) return alert("Пожалуйста, заполните Имя и Телефон");
-        if(!dateVal || !timeVal) return alert("Выберите дату и время доставки");
+        if(!dateVal || timeVal.length < 5) return alert("Введите корректное время (например, 14:30)");
 
         const selectedDate = new Date(dateVal + 'T' + timeVal);
         const check = checkWorkingHours(selectedDate);
@@ -321,10 +340,8 @@
         }
 
         const total = document.getElementById('total').innerText;
-        // ГЕНЕРАЦИЯ СЛУЧАЙНОГО НОМЕРА (от 1000 до 9999)
         const orderId = Math.floor(1000 + Math.random() * 9000); 
 
-        // ИЗМЕНЕН ЗАГОЛОВОК
         const message = `
 🧾 <b>ЗАКАЗ №${orderId}</b>
 
@@ -362,9 +379,12 @@ ${orderTxt}
         }
     }
 
+    // Инициализация дат
     const now = new Date();
     document.getElementById('date').min = now.toISOString().split("T")[0];
     document.getElementById('date').valueAsDate = now;
+    
+    // Установка времени +40 минут
     now.setMinutes(now.getMinutes() + 40);
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
