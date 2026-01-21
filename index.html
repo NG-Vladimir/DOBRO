@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ДОБРО v2.0</title>
+    <title>ДОБРО v2.0 — Mini App</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -40,7 +43,6 @@
             font-weight: 900; font-size: 2.8rem; letter-spacing: -1.5px; margin: 0; 
             background: linear-gradient(180deg, #333 0%, #000 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
         .categories {
@@ -55,7 +57,7 @@
             padding: 10px 20px; border-radius: 100px;
             white-space: nowrap; font-size: 0.95rem; font-weight: 600; transition: 0.3s;
         }
-        .cat-btn.active { background: #111; color: #fff; border-color: #111; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .cat-btn.active { background: #111; color: #fff; border-color: #111; }
 
         .section-title { font-size: 1.3rem; font-weight: 700; margin: 25px 5px 15px; opacity: 0.8; }
 
@@ -63,46 +65,41 @@
             background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid #fff; padding: 22px; border-radius: 26px; margin-bottom: 14px; 
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(255,255,255,0.5);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.02);
         }
 
         .item-name { font-weight: 700; font-size: 1.05rem; display: block; margin-bottom: 6px; line-height: 1.3; }
         .item-price { font-weight: 700; font-size: 1.1rem; color: #111; }
-        .item-price span { color: var(--gray); font-size: 0.9rem; font-weight: 500; }
-        .promo-icon { margin-left: 6px; font-size: 1rem; vertical-align: middle; }
+        .item-price span { color: var(--gray); font-size: 0.8rem; font-weight: 500; }
 
         .counter { 
             display: flex; align-items: center; gap: 8px; 
             background: #fff; padding: 4px; border-radius: 100px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        .btn-c { background: transparent; border: none; width: 32px; height: 32px; font-size: 1.2rem; font-weight: 600; color: #111; padding: 0;}
-        .count-val { font-weight: 600; min-width: 20px; text-align: center; font-size: 0.95rem; }
+        .btn-c { background: transparent; border: none; width: 32px; height: 32px; font-size: 1.2rem; font-weight: 600; color: #111; }
+        .count-val { font-weight: 600; min-width: 20px; text-align: center; }
 
         .btn-plus-init { 
             background: #000; color: #fff; border: none; padding: 12px 24px; 
             border-radius: 100px; font-weight: 600; font-size: 0.9rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s;
         }
-        .btn-plus-init:active { transform: scale(0.95); }
 
         .footer-cart { 
             position: fixed; bottom: 30px; left: 20px; right: 20px; 
             background: rgba(30, 30, 30, 0.9); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             padding: 18px 24px; border-radius: 24px; 
             display: flex; justify-content: space-between; align-items: center; 
-            z-index: 1000; color: #fff; box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            transition: 0.4s cubic-bezier(0.3, 1.5, 0.4, 1);
+            z-index: 1000; color: #fff; transition: 0.4s cubic-bezier(0.3, 1.5, 0.4, 1);
         }
         .footer-cart.empty { transform: translateY(200%); }
-        .checkout-btn { background: #fff; color: #000; padding: 12px 28px; border-radius: 16px; border: none; font-weight: 700; font-size: 0.95rem; }
+        .checkout-btn { background: #fff; color: #000; padding: 12px 28px; border-radius: 16px; border: none; font-weight: 700; }
 
         #modal, #success-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; }
-        .modal-blur { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+        .modal-blur { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.2); backdrop-filter: blur(15px); }
         .modal-content { 
             position: absolute; bottom: 0; width: 100%; background: #fff;
             padding: 40px 25px 50px; border-radius: 35px 35px 0 0; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
             animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -110,12 +107,9 @@
         input, textarea { 
             width: 100%; padding: 18px; background: #f2f2f5; 
             border: 1px solid transparent; border-radius: 18px; margin-bottom: 16px; 
-            font-size: 1rem; font-family: inherit; font-weight: 500; color: #111;
+            font-size: 1rem; font-family: inherit;
         }
-        input:focus, textarea:focus { background: #fff; border-color: #000; }
-        .big-btn { background: #000; color: #fff; width: 100%; padding: 20px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; margin-top: 10px; }
-        
-        .success-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .big-btn { background: #000; color: #fff; width: 100%; padding: 20px; border-radius: 20px; border: none; font-weight: 700; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -145,38 +139,36 @@
 <div id="modal">
     <div class="modal-blur" onclick="toggleModal(false)"></div>
     <div class="modal-content">
-        <h2 style="margin: 0 0 25px; font-weight: 800; font-size: 1.8rem;">Ваш заказ</h2>
+        <h2 style="margin: 0 0 25px; font-weight: 800; font-size: 1.8rem;">Детали заказа</h2>
         <input type="text" id="name" placeholder="Ваше имя">
         <input type="tel" id="phone" value="+375 ">
         
         <div style="display:flex; gap:12px;">
-            <input type="date" id="date" style="flex:1.2;" onchange="validateTimeInput()">
-            <input type="text" id="time" style="flex:0.8;" 
-                   placeholder="12:00" 
-                   inputmode="decimal" 
-                   onchange="validateTimeInput()">
+            <input type="date" id="date" style="flex:1.2;">
+            <input type="text" id="time" style="flex:0.8;" placeholder="12:00" inputmode="decimal">
         </div>
         
-        <textarea id="comment" placeholder="Комментарий" rows="3"></textarea>
+        <textarea id="comment" placeholder="Нужен ли маринад? Укажите здесь..." rows="3"></textarea>
         <button class="big-btn" onclick="sendToTelegram()">Отправить заказ</button>
     </div>
 </div>
 
 <div id="success-screen">
     <div class="modal-blur"></div>
-    <div class="success-content" style="position:relative; z-index:2;">
-        <div style="font-size: 5rem; margin-bottom: 20px; animation: bounce 1s infinite alternate;">🥩</div>
-        <h2 style="font-weight: 900; font-size: 2.2rem; margin-bottom: 10px;">Принято!</h2>
-        <p style="color: var(--dark); opacity: 0.7; font-size: 1.1rem; margin-bottom: 40px;">Скоро наберем вам<br>для подтверждения.</p>
-        <button class="cat-btn active" style="padding: 15px 50px;" onclick="location.reload()">Вернуться</button>
+    <div class="success-content" style="position:relative; z-index:2; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+        <div style="font-size: 5rem; margin-bottom: 20px;">🥩</div>
+        <h2 style="font-weight: 900; font-size: 2.2rem;">Принято!</h2>
+        <p style="opacity: 0.7; margin-bottom: 40px; padding: 0 20px;">Заказ отправлен менеджеру.<br>Мы свяжемся с вами в Telegram.</p>
+        <button class="cat-btn active" style="padding: 15px 60px;" onclick="tg.close()">Закрыть</button>
     </div>
 </div>
 
-<style>
-@keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
-</style>
-
 <script>
+    // Инициализация Telegram
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // Разворачиваем приложение
+    tg.ready();
+
     const products = [
         { n: "Рёбрышки BBQ пластинки", p: 43, u: "кг", c: "Акция", promo: true, step: 0.5 },
         { n: "Половинка курочки (~1кг)", p: 24, u: "шт", c: "Акция", promo: true, step: 1 },
@@ -196,22 +188,23 @@
     let cart = {};
     let currentCategory = "Все";
 
-    // Маска для телефона
+    // Авто-заполнение имени из Telegram
+    if (tg.initDataUnsafe?.user) {
+        document.getElementById('name').value = tg.initDataUnsafe.user.first_name || "";
+    }
+
+    // Маски ввода (Телефон и Время)
     document.getElementById('phone').addEventListener('input', function (e) {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[2] && e.target.value.length < 5) { e.target.value = '+375 '; return; }
         e.target.value = !x[3] ? '+375 (' + x[2] : '+375 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
     });
 
-    // НОВОЕ: Маска для ввода времени (ЧЧ:ММ)
     document.getElementById('time').addEventListener('input', function (e) {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length > 4) v = v.slice(0, 4);
-        if (v.length >= 3) {
-            e.target.value = v.slice(0, 2) + ':' + v.slice(2);
-        } else {
-            e.target.value = v;
-        }
+        if (v.length >= 3) e.target.value = v.slice(0, 2) + ':' + v.slice(2);
+        else e.target.value = v;
     });
 
     function filterMenu(cat) {
@@ -233,21 +226,19 @@
                 menu.innerHTML += `<div class="section-title">${cat}</div>`;
                 filtered.forEach(item => {
                     const count = cart[item.n] || 0;
-                    const step = item.step; 
-                    
                     menu.innerHTML += `
                         <div class="item">
                             <div class="item-info">
-                                <span class="item-name">${item.n} ${item.promo ? '<span class="promo-icon">🔥</span>' : ''}</span>
+                                <span class="item-name">${item.n} ${item.promo ? '🔥' : ''}</span>
                                 <span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span>
                             </div>
                             <div>
                                 ${count === 0 
-                                    ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${step})">Добавить</button>`
+                                    ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>`
                                     : `<div class="counter">
-                                        <button class="btn-c" onclick="updateCart('${item.n}', -${step})">−</button>
+                                        <button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button>
                                         <span class="count-val">${count}</span>
-                                        <button class="btn-c" onclick="updateCart('${item.n}', ${step})">+</button>
+                                        <button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button>
                                        </div>`
                                 }
                             </div>
@@ -264,6 +255,8 @@
         cart[name] = Math.max(0, newVal);
         if (cart[name] === 0) delete cart[name];
         renderMenu();
+        // Легкая вибрация при добавлении
+        if (delta > 0) tg.HapticFeedback.impactOccurred('light');
     }
 
     function updateTotal() {
@@ -274,64 +267,30 @@
         t > 0 ? panel.classList.remove('empty') : panel.classList.add('empty');
     }
 
-    function checkWorkingHours(checkDate = new Date()) {
-        const day = checkDate.getDay(); 
-        const hour = checkDate.getHours();
-
-        if (day === 0) return { ok: false, msg: "В воскресенье у нас выходной!" };
-        if (day === 6) {
-            if (hour >= 10 && hour < 17) return { ok: true };
-            return { ok: false, msg: "В субботу работаем с 10:00 до 17:00" };
-        }
-        if (hour >= 10 && hour < 18) return { ok: true };
-        return { ok: false, msg: "В будние работаем с 10:00 до 18:00" };
-    }
-
-    function validateTimeInput() {
-        const dateVal = document.getElementById('date').value;
-        const timeVal = document.getElementById('time').value;
-        if (!dateVal || timeVal.length < 5) return;
-        
-        const selectedDate = new Date(dateVal + 'T' + timeVal);
-        // Проверка на корректность даты
-        if (isNaN(selectedDate.getTime())) return;
-
-        const check = checkWorkingHours(selectedDate);
-        if (!check.ok) {
-            alert("⚠️ " + check.msg);
-            document.getElementById('time').value = ""; 
-        }
-    }
-
     function toggleModal(s) { 
-        if (s) {
-            const check = checkWorkingHours(new Date());
-            if (!check.ok) {
-                alert("💤 Мы сейчас закрыты!\n\n" + check.msg + "\n\nНо вы можете оставить заявку на завтра.");
-            }
-        }
         document.getElementById('modal').style.display = s ? 'block' : 'none'; 
         document.body.classList.toggle('modal-open', s);
     }
 
-    function escapeHtml(text) {
-        if (!text) return text;
-        return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-    }
-
     async function sendToTelegram() {
-        const name = escapeHtml(document.getElementById('name').value);
-        const phone = escapeHtml(document.getElementById('phone').value);
+        const name = document.getElementById('name').value;
+        const phone = document.getElementById('phone').value;
         const dateVal = document.getElementById('date').value;
         const timeVal = document.getElementById('time').value;
-        const comment = escapeHtml(document.getElementById('comment').value);
+        const comment = document.getElementById('comment').value;
 
-        if(!name || phone.length < 18) return alert("Пожалуйста, заполните Имя и Телефон");
-        if(!dateVal || timeVal.length < 5) return alert("Введите корректное время (например, 14:30)");
+        if(!name || phone.length < 18 || !timeVal) return alert("Пожалуйста, заполните все данные!");
 
-        const selectedDate = new Date(dateVal + 'T' + timeVal);
-        const check = checkWorkingHours(selectedDate);
-        if (!check.ok) return alert("⛔️ " + check.msg + "\nПожалуйста, выберите рабочее время.");
+        // МАГИЯ ПОЛУЧЕНИЯ ДАННЫХ ИЗ ТЕЛЕГРАМА
+        const user = tg.initDataUnsafe?.user;
+        let tgProfile = "Не определен";
+        
+        if (user) {
+            // Если есть username, делаем через @, если нет - через ID (все равно будет кликабельно)
+            tgProfile = user.username 
+                ? `@${user.username}` 
+                : `<a href="tg://user?id=${user.id}">${user.first_name || 'Профиль'}</a>`;
+        }
 
         let orderTxt = "";
         for (let n in cart) {
@@ -339,20 +298,18 @@
             orderTxt += `— ${n} <b>(${cart[n]} ${p.u})</b>\n`;
         }
 
-        const total = document.getElementById('total').innerText;
-        const orderId = Math.floor(1000 + Math.random() * 9000); 
-
         const message = `
-🧾 <b>ЗАКАЗ №${orderId}</b>
+🧾 <b>ЗАКАЗ №${Math.floor(1000 + Math.random() * 9000)}</b>
 
 👤 <b>Клиент:</b> ${name}
+🔗 <b>Профиль ТГ:</b> ${tgProfile}
 📞 <b>Телефон:</b> ${phone}
 📅 <b>Время:</b> ${dateVal} в ${timeVal}
 💬 <b>Комментарий:</b> ${comment || '-'}
 
 🛒 <b>КОРЗИНА:</b>
 ${orderTxt}
-💰 <b>ИТОГО: ${total} BYN</b>
+💰 <b>ИТОГО: ${document.getElementById('total').innerText} BYN</b>
         `;
         
         try {
@@ -363,32 +320,29 @@ ${orderTxt}
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: "-1003698576143", text: message, parse_mode: "HTML" })
+                body: JSON.stringify({ 
+                    chat_id: "-1003698576143", 
+                    text: message, 
+                    parse_mode: "HTML" 
+                })
             });
+            
+            tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('modal').style.display = 'none';
             document.getElementById('success-screen').style.display = 'block';
-            cart = {};
-            updateTotal();
-            renderMenu();
             
         } catch (e) { 
             alert("Ошибка сети. Попробуйте еще раз."); 
-            const btn = document.querySelector('.big-btn');
             btn.innerText = 'Отправить заказ';
             btn.disabled = false;
         }
     }
 
     // Инициализация дат
+    const dInput = document.getElementById('date');
     const now = new Date();
-    document.getElementById('date').min = now.toISOString().split("T")[0];
-    document.getElementById('date').valueAsDate = now;
-    
-    // Установка времени +40 минут
-    now.setMinutes(now.getMinutes() + 40);
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('time').value = `${hours}:${minutes}`;
+    dInput.min = now.toISOString().split("T")[0];
+    dInput.valueAsDate = now;
 
     renderMenu();
 </script>
