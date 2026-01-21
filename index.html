@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ДОБРО v2.3</title>
+    <title>ДОБРО v2.4</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -12,24 +12,23 @@
             --card: #ffffff;
             --text: #000000;
             --gray: #8e8e93;
-            --accent: #000000;
+            --accent: #007aff; /* Синий акцент как в iOS для фокуса */
             --border: #e5e5ea;
         }
         
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             font-family: 'Inter', sans-serif; 
             background: var(--bg);
             color: var(--text);
-            margin: 0; padding: 0 12px 160px; /* Увеличен отступ снизу */
+            margin: 0; padding: 0 12px 180px;
             overflow-x: hidden;
         }
 
         header { padding: 30px 4px 10px; }
         .logo { font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
 
-        /* Категории теперь не перекрывают всё на свете */
         .categories {
             display: flex; gap: 8px; overflow-x: auto; padding: 12px 0;
             position: sticky; top: 0; z-index: 100; background: var(--bg);
@@ -42,77 +41,69 @@
             padding: 8px 16px; border-radius: 100px;
             white-space: nowrap; font-size: 0.85rem; font-weight: 600;
         }
-        .cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .cat-btn.active { background: #000; color: #fff; border-color: #000; }
 
-        .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; text-transform: uppercase; color: var(--gray); }
+        .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; color: var(--gray); }
 
-        /* Карточки товара: Фикс верстки, чтобы цена не прыгала */
         .item { 
             background: var(--card); border-radius: 18px; padding: 16px; 
             margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(0,0,0,0.05);
         }
-        .item-info { flex: 1; padding-right: 10px; }
-        .item-name { font-weight: 700; font-size: 0.95rem; display: block; margin-bottom: 4px; line-height: 1.2; }
+        .item-info { flex: 1; }
+        .item-name { font-weight: 700; font-size: 0.95rem; display: block; margin-bottom: 4px; }
         .item-price { font-weight: 700; font-size: 0.95rem; }
-        .item-price span { color: var(--gray); font-size: 0.8rem; }
 
-        /* Кнопки управления */
-        .counter { 
-            display: flex; align-items: center; gap: 4px; 
-            background: #f2f2f7; padding: 4px; border-radius: 12px;
-        }
-        .btn-c { background: transparent; border: none; font-size: 1.2rem; font-weight: 600; padding: 4px 10px; min-width: 35px; }
-        .count-val { font-weight: 700; min-width: 20px; text-align: center; font-size: 0.9rem; }
+        .counter { display: flex; align-items: center; gap: 4px; background: #f2f2f7; padding: 4px; border-radius: 12px; }
+        .btn-c { background: transparent; border: none; font-size: 1.2rem; font-weight: 600; padding: 4px 10px; }
+        .count-val { font-weight: 700; min-width: 20px; text-align: center; }
 
-        .btn-plus-init { 
-            background: var(--accent); color: #fff; border: none; 
-            padding: 10px 16px; border-radius: 12px; font-weight: 700; font-size: 0.85rem;
-        }
+        .btn-plus-init { background: #000; color: #fff; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; }
 
-        /* Футер-панель */
         .footer-cart { 
             position: fixed; bottom: 20px; left: 12px; right: 12px; 
             background: #1c1c1e; padding: 16px 20px; border-radius: 20px; 
             display: flex; justify-content: space-between; align-items: center; 
             z-index: 999; color: #fff;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
         .footer-cart.empty { display: none; }
-        .checkout-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 12px; border: none; font-weight: 800; font-size: 0.9rem; }
+        .checkout-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 12px; border: none; font-weight: 800; }
 
-        /* МОДАЛЬНОЕ ОКНО: Фикс для работы с клавиатурой */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; }
-        .modal-blur { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); }
+        /* ИСПРАВЛЕННОЕ МОДАЛЬНОЕ ОКНО */
+        #modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; 
+            overflow-y: auto; /* Позволяет всему экрану скроллиться */
+        }
+        .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(8px); }
         
         .modal-content { 
-            position: absolute; bottom: 0; width: 100%; background: #fff;
-            padding: 20px 20px calc(20px + env(safe-area-inset-bottom)); 
+            position: relative; /* Не absolute, чтобы скроллилось */
+            margin-top: 15vh; /* Отступ сверху, чтобы окно было посередине/внизу */
+            width: 100%; background: #fff;
+            padding: 30px 20px 100px; /* Большой отступ снизу, чтобы клавиатура не закрывала кнопку */
             border-radius: 24px 24px 0 0; 
-            max-height: 95vh; overflow-y: auto; 
-            animation: slideUp 0.3s ease-out;
+            min-height: 85vh;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
         }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-        .input-box { margin-bottom: 12px; }
-        .input-box label { display: block; font-size: 0.75rem; font-weight: 700; color: var(--gray); margin-bottom: 4px; text-transform: uppercase; }
+        .input-box { margin-bottom: 16px; }
+        .input-box label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gray); margin-bottom: 6px; text-transform: uppercase; }
         
         input, textarea { 
-            width: 100%; padding: 14px; 
+            width: 100%; padding: 16px; 
             background: #f2f2f7; border: 2px solid transparent; 
-            border-radius: 12px; font-size: 16px; 
-            font-family: inherit; color: #000;
-            transition: 0.2s;
+            border-radius: 14px; font-size: 16px; 
+            font-family: inherit; color: #000 !important; /* Текст теперь всегда черный */
+            opacity: 1 !important;
         }
-        input:focus, textarea:focus { border-color: #007aff; background: #fff; outline: none; }
+        input:focus, textarea:focus { border-color: var(--accent); background: #fff; outline: none; }
 
         .row { display: flex; gap: 10px; }
         .row > div { flex: 1; }
 
         .big-btn { 
-            background: var(--accent); color: #fff; width: 100%; 
-            padding: 16px; border-radius: 16px; border: none; 
-            font-weight: 700; font-size: 1rem; margin-top: 10px; 
+            background: #000; color: #fff; width: 100%; 
+            padding: 18px; border-radius: 16px; border: none; 
+            font-weight: 700; font-size: 1.1rem; margin-top: 10px; 
         }
 
         #success-screen { 
@@ -130,15 +121,14 @@
     <button class="cat-btn" onclick="filterMenu('Акция')">🔥 Акции</button>
     <button class="cat-btn" onclick="filterMenu('Говядина')">Говядина</button>
     <button class="cat-btn" onclick="filterMenu('Свинина')">Свинина</button>
-    <button class="cat-btn" onclick="filterMenu('Птица')">Птица</button>
 </div>
 
 <div id="menu"></div>
 
 <div class="footer-cart empty" id="cart-panel">
     <div>
-        <div style="font-size: 0.75rem; opacity: 0.6;">Итого</div>
-        <div style="font-weight: 800; font-size: 1.2rem;"><span id="total">0</span> BYN</div>
+        <div style="font-size: 0.75rem; opacity: 0.6;">Сумма</div>
+        <div style="font-weight: 800; font-size: 1.3rem;"><span id="total">0</span> BYN</div>
     </div>
     <button class="checkout-btn" onclick="toggleModal(true)">Оформить</button>
 </div>
@@ -146,16 +136,16 @@
 <div id="modal">
     <div class="modal-blur" onclick="toggleModal(false)"></div>
     <div class="modal-content">
-        <div style="width: 40px; height: 5px; background: #e5e5ea; border-radius: 10px; margin: -10px auto 15px;"></div>
-        <h2 style="margin: 0 0 15px; font-weight: 800; font-size: 1.4rem;">Ваш заказ</h2>
+        <div style="width: 40px; height: 4px; background: #e5e5ea; border-radius: 10px; margin: -10px auto 20px;"></div>
+        <h2 style="margin: 0 0 20px; font-weight: 900; font-size: 1.6rem;">Оформление</h2>
         
         <div class="input-box">
-            <label>Имя</label>
-            <input type="text" id="name" placeholder="Ваше имя">
+            <label>Ваше имя</label>
+            <input type="text" id="name" placeholder="Как вас зовут?">
         </div>
 
         <div class="input-box">
-            <label>Телефон</label>
+            <label>Номер телефона</label>
             <input type="tel" id="phone" value="+375 ">
         </div>
         
@@ -171,26 +161,25 @@
         </div>
         
         <div class="input-box">
-            <label>Комментарий</label>
-            <textarea id="comment" placeholder="Маринад, время, детали..." rows="2"></textarea>
+            <label>Комментарий к заказу</label>
+            <textarea id="comment" placeholder="Маринад, разделка и др. пожелания" rows="3"></textarea>
         </div>
 
         <button class="big-btn" onclick="sendToTelegram()">Отправить заказ</button>
-    </div>
+        <div style="height: 50px;"></div> </div>
 </div>
 
 <div id="success-screen">
-    <div style="font-size: 4rem;">🥩</div>
-    <h2 style="font-weight: 800;">Принято!</h2>
-    <p style="color: var(--gray); font-size: 0.9rem;">Менеджер уже видит ваш заказ.</p>
-    <button class="cat-btn active" style="padding: 12px 40px; margin-top: 20px;" onclick="tg.close()">Закрыть меню</button>
+    <div style="font-size: 5rem;">🥩</div>
+    <h2 style="font-weight: 900;">Заказ принят!</h2>
+    <p style="color: var(--gray);">Мы получили ваш заказ и скоро свяжемся.</p>
+    <button class="big-btn" style="width: 220px;" onclick="tg.close()">Закрыть</button>
 </div>
 
 <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
     tg.ready();
-    tg.headerColor = '#f2f2f7';
 
     if (tg.initDataUnsafe?.user) {
         document.getElementById('name').value = tg.initDataUnsafe.user.first_name || "";
@@ -201,28 +190,19 @@
         { n: "Половинка курочки (~1кг)", p: 24, u: "шт", c: "Акция", step: 1 },
         { n: "Говядина рваная", p: 95, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Говяжий язык", p: 90, u: "кг", c: "Говядина", step: 0.5 },
-        { n: "Говяжьи щечки", p: 105, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Рваная Свинина BBQ", p: 80, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Буженина (шея)", p: 85, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Рёбрышки мясные", p: 65, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Рулька томленая", p: 55, u: "шт", c: "Свинина", step: 1 },
-        { n: "Индейка бедро", p: 70, u: "кг", c: "Птица", step: 0.5 },
-        { n: "Курочка половинка", p: 24, u: "шт", c: "Птица", step: 1 },
-        { n: "Утка с яблоками", p: 75, u: "кг", c: "Птица", step: 0.5 },
-        { n: "Колбаски куриные", p: 60, u: "кг", c: "Птица", step: 0.5 }
+        { n: "Буженина (шея)", p: 85, u: "кг", c: "Свинина", step: 0.5 }
     ];
 
     let cart = {};
     let currentCategory = "Все";
 
-    // Фикс маски телефона
     document.getElementById('phone').addEventListener('input', function (e) {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[2] && e.target.value.length < 5) { e.target.value = '+375 '; return; }
         e.target.value = !x[3] ? '+375 (' + x[2] : '+375 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
     });
 
-    // Фикс времени
     document.getElementById('time').addEventListener('input', function (e) {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length > 4) v = v.slice(0, 4);
@@ -239,7 +219,7 @@
     function renderMenu() {
         const menu = document.getElementById('menu');
         menu.innerHTML = "";
-        const cats = currentCategory === "Все" ? ["Акция", "Говядина", "Свинина", "Птица"] : [currentCategory];
+        const cats = currentCategory === "Все" ? ["Акция", "Говядина", "Свинина"] : [currentCategory];
         
         cats.forEach(cat => {
             const filtered = products.filter(p => p.c === cat);
@@ -288,7 +268,8 @@
 
     function toggleModal(s) { 
         document.getElementById('modal').style.display = s ? 'block' : 'none'; 
-        if (s) tg.HapticFeedback.impactOccurred('medium');
+        // Если открываем, прокручиваем в начало формы
+        if(s) window.scrollTo(0,0);
     }
 
     async function sendToTelegram() {
@@ -298,39 +279,27 @@
         const timeVal = document.getElementById('time').value;
         const comment = document.getElementById('comment').value;
 
-        if(!name || phone.length < 18 || !timeVal) {
-            tg.HapticFeedback.notificationOccurred('error');
-            return alert("Заполните все данные!");
-        }
+        if(!name || phone.length < 18 || !timeVal) return alert("Заполните имя, телефон и время!");
 
         const user = tg.initDataUnsafe?.user;
-        const tgLink = user ? (user.username ? `@${user.username}` : `<a href="tg://user?id=${user.id}">${user.first_name}</a>`) : "Не определен";
+        const tgLink = user ? (user.username ? `@${user.username}` : `ID: ${user.id}`) : "Не определен";
 
         let orderTxt = "";
         for (let n in cart) {
-            orderTxt += `— ${n} <b>(${cart[n]} ${products.find(x=>x.n===n).u})</b>\n`;
+            orderTxt += `— ${n} (${cart[n]} ${products.find(x=>x.n===n).u})\n`;
         }
 
-        const message = `🧾 <b>ЗАКАЗ №${Math.floor(1000 + Math.random() * 9000)}</b>\n\n👤 <b>Клиент:</b> ${name}\n🔗 <b>Профиль:</b> ${tgLink}\n📞 <b>Тел:</b> ${phone}\n📅 <b>Время:</b> ${dateVal} в ${timeVal}\n💬 <b>Инфо:</b> ${comment || '-'}\n\n🛒 <b>КОРЗИНА:</b>\n${orderTxt}\n💰 <b>ИТОГО: ${document.getElementById('total').innerText} BYN</b>`;
+        const message = `🧾 ЗАКАЗ\n\n👤 Клиент: ${name}\n🔗 Профиль: ${tgLink}\n📞 Тел: ${phone}\n📅 Когда: ${dateVal} в ${timeVal}\n💬 Инфо: ${comment || '-'}\n\n🛒 КОРЗИНА:\n${orderTxt}\n💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
         
         try {
-            const btn = document.querySelector('.big-btn');
-            btn.innerText = 'Отправка...';
-            btn.disabled = true;
-
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
                 method: 'POST', 
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: "-1003698576143", text: message, parse_mode: "HTML" })
+                body: JSON.stringify({ chat_id: "-1003698576143", text: message })
             });
-            
-            tg.HapticFeedback.notificationOccurred('success');
             document.getElementById('success-screen').style.display = 'flex';
-        } catch (e) { 
-            alert("Ошибка сети!"); 
-            btn.disabled = false;
-            btn.innerText = 'Отправить заказ';
-        }
+            tg.HapticFeedback.notificationOccurred('success');
+        } catch (e) { alert("Ошибка!"); }
     }
 
     document.getElementById('date').valueAsDate = new Date();
