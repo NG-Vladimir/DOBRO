@@ -3,90 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ДОБРО v2.5</title>
+    <title>ДОБРО v2.6 — Финальная версия</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --bg: #f2f2f7;
-            --card: #ffffff;
-            --text: #000000;
-            --gray: #6e6e73; /* Сделал чуть темнее для читаемости */
-            --border: #d1d1d6;
+            --bg: #f2f2f7; 
+            --card: #ffffff; 
+            --text: #000000; 
+            --gray: #6e6e73; 
+            --border: #d1d1d6; 
         }
-        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background: var(--bg);
-            color: var(--text);
-            margin: 0; padding: 0 12px 180px;
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 0 12px 180px; /* Большой отступ снизу для удобства */
         }
 
         header { padding: 30px 4px 10px; }
         .logo { font-weight: 900; font-size: 2.2rem; letter-spacing: -1px; }
 
-        .categories {
-            display: flex; gap: 8px; overflow-x: auto; padding: 12px 0;
-            position: sticky; top: 0; z-index: 100; background: var(--bg);
-            scrollbar-width: none;
+        /* Категории */
+        .categories { 
+            display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; 
+            position: sticky; top: 0; z-index: 100; background: var(--bg); 
+            scrollbar-width: none; 
         }
         .categories::-webkit-scrollbar { display: none; }
         
-        .cat-btn {
-            background: #fff; border: 1px solid var(--border);
-            padding: 8px 16px; border-radius: 100px;
-            white-space: nowrap; font-size: 0.85rem; font-weight: 600;
+        .cat-btn { 
+            background: #fff; border: 1px solid var(--border); 
+            padding: 8px 16px; border-radius: 100px; 
+            white-space: nowrap; font-size: 0.85rem; font-weight: 600; 
         }
         .cat-btn.active { background: #000; color: #fff; border-color: #000; }
 
+        /* Товары */
         .section-title { font-size: 1.1rem; font-weight: 800; margin: 20px 4px 10px; color: #8e8e93; }
-
         .item { 
             background: var(--card); border-radius: 18px; padding: 16px; 
-            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; 
         }
         .item-name { font-weight: 700; font-size: 0.95rem; display: block; margin-bottom: 4px; }
         .item-price { font-weight: 700; font-size: 0.95rem; }
+        .item-price span { color: var(--gray); font-size: 0.8rem; }
 
+        /* Управление количеством */
         .counter { display: flex; align-items: center; gap: 4px; background: #f2f2f7; padding: 4px; border-radius: 12px; }
         .btn-c { background: transparent; border: none; font-size: 1.2rem; font-weight: 600; padding: 4px 10px; }
         .count-val { font-weight: 700; min-width: 20px; text-align: center; }
-
         .btn-plus-init { background: #000; color: #fff; border: none; padding: 10px 16px; border-radius: 12px; font-weight: 700; }
 
+        /* Панель корзины */
         .footer-cart { 
             position: fixed; bottom: 20px; left: 12px; right: 12px; 
             background: #1c1c1e; padding: 16px 20px; border-radius: 20px; 
             display: flex; justify-content: space-between; align-items: center; 
-            z-index: 999; color: #fff;
+            z-index: 999; color: #fff; 
         }
         .footer-cart.empty { display: none; }
         .checkout-btn { background: #fff; color: #000; padding: 10px 20px; border-radius: 12px; border: none; font-weight: 800; }
 
-        /* ИСПРАВЛЕННОЕ МОДАЛЬНОЕ ОКНО */
+        /* Модальное окно */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2000; overflow-y: auto; }
         .modal-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(10px); }
-        
         .modal-content { 
-            position: relative; margin-top: 10vh; width: 100%; background: #fff;
-            padding: 25px 20px 120px; border-radius: 24px 24px 0 0; 
-            min-height: 90vh; box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+            position: relative; margin-top: 10vh; width: 100%; background: #fff; 
+            padding: 25px 20px 120px; border-radius: 24px 24px 0 0; min-height: 90vh; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.2); 
         }
 
-        .input-box { margin-bottom: 18px; } /* Увеличил отступ между полями */
+        .input-box { margin-bottom: 18px; }
         .input-box label { display: block; font-size: 0.8rem; font-weight: 700; color: var(--gray); margin-bottom: 8px; text-transform: uppercase; }
         
         input, textarea { 
-            width: 100%; padding: 16px; 
-            background: #f2f2f7; border: 2px solid #efefef; 
-            border-radius: 14px; font-size: 16px; 
-            font-family: inherit; color: #000 !important; font-weight: 500;
+            width: 100%; padding: 16px; background: #f2f2f7; border: 2px solid #efefef; 
+            border-radius: 14px; font-size: 16px; font-family: inherit; 
+            color: #000 !important; font-weight: 500; 
         }
         input:focus { border-color: #000; background: #fff; outline: none; }
 
-        /* УБРАЛ ROW (теперь дата и время друг под другом для фикса наезда) */
         .big-btn { 
             background: #000; color: #fff; width: 100%; 
             padding: 18px; border-radius: 16px; border: none; 
@@ -95,7 +97,8 @@
 
         #success-screen { 
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #fff; z-index: 3000; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            background: #fff; z-index: 3000; flex-direction: column; 
+            align-items: center; justify-content: center; text-align: center; 
         }
     </style>
 </head>
@@ -126,31 +129,12 @@
         <div style="width: 40px; height: 4px; background: #e5e5ea; border-radius: 10px; margin: -10px auto 20px;"></div>
         <h2 style="margin: 0 0 25px; font-weight: 900; font-size: 1.6rem;">Оформление</h2>
         
-        <div class="input-box">
-            <label>Ваше имя</label>
-            <input type="text" id="name" placeholder="Введите имя">
-        </div>
-
-        <div class="input-box">
-            <label>Номер телефона</label>
-            <input type="tel" id="phone" value="+375 ">
-        </div>
+        <div class="input-box"><label>Ваше имя</label><input type="text" id="name"></div>
+        <div class="input-box"><label>Номер телефона</label><input type="tel" id="phone" value="+375 "></div>
+        <div class="input-box"><label>Дата доставки</label><input type="date" id="date"></div>
+        <div class="input-box"><label>Время доставки</label><input type="text" id="time" placeholder="Пример: 14:30" inputmode="decimal"></div>
+        <div class="input-box"><label>Комментарий</label><textarea id="comment" rows="3" placeholder="Маринад, разделка и пожелания"></textarea></div>
         
-        <div class="input-box">
-            <label>Дата доставки</label>
-            <input type="date" id="date">
-        </div>
-
-        <div class="input-box">
-            <label>Время доставки</label>
-            <input type="text" id="time" placeholder="Пример: 14:30" inputmode="decimal">
-        </div>
-        
-        <div class="input-box">
-            <label>Комментарий</label>
-            <textarea id="comment" placeholder="Маринад, разделка и др." rows="3"></textarea>
-        </div>
-
         <button class="big-btn" onclick="sendToTelegram()">Заказать мясо</button>
         <div style="height: 100px;"></div> 
     </div>
@@ -159,7 +143,7 @@
 <div id="success-screen">
     <div style="font-size: 5rem;">🥩</div>
     <h2 style="font-weight: 900;">Заказ принят!</h2>
-    <p style="color: var(--gray);">Скоро свяжемся с вами.</p>
+    <p>Подробности отправлены вам в личные сообщения.</p>
     <button class="big-btn" style="width: 200px;" onclick="tg.close()">Ок</button>
 </div>
 
@@ -184,13 +168,15 @@
     let cart = {};
     let currentCategory = "Все";
 
-    document.getElementById('phone').addEventListener('input', function (e) {
+    // Маска телефона
+    document.getElementById('phone').addEventListener('input', e => {
         let x = e.target.value.replace(/\D/g, '').match(/(\d{0,3})(\d{0,2})(\d{0,3})(\d{0,2})(\d{0,2})/);
         if (!x[2] && e.target.value.length < 5) { e.target.value = '+375 '; return; }
         e.target.value = !x[3] ? '+375 (' + x[2] : '+375 (' + x[2] + ') ' + x[3] + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
     });
 
-    document.getElementById('time').addEventListener('input', function (e) {
+    // Маска времени
+    document.getElementById('time').addEventListener('input', e => {
         let v = e.target.value.replace(/\D/g, '');
         if (v.length > 4) v = v.slice(0, 4);
         if (v.length >= 3) e.target.value = v.slice(0, 2) + ':' + v.slice(2);
@@ -207,30 +193,13 @@
         const menu = document.getElementById('menu');
         menu.innerHTML = "";
         const cats = currentCategory === "Все" ? ["Акция", "Говядина", "Свинина"] : [currentCategory];
-        
         cats.forEach(cat => {
             const filtered = products.filter(p => p.c === cat);
             if (filtered.length > 0) {
                 menu.innerHTML += `<div class="section-title">${cat}</div>`;
                 filtered.forEach(item => {
                     const count = cart[item.n] || 0;
-                    menu.innerHTML += `
-                        <div class="item">
-                            <div class="item-info">
-                                <span class="item-name">${item.n}</span>
-                                <span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span>
-                            </div>
-                            <div>
-                                ${count === 0 
-                                    ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>`
-                                    : `<div class="counter">
-                                        <button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button>
-                                        <span class="count-val">${count}</span>
-                                        <button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button>
-                                       </div>`
-                                }
-                            </div>
-                        </div>`;
+                    menu.innerHTML += `<div class="item"><div class="item-info"><span class="item-name">${item.n}</span><span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span></div><div>${count === 0 ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>` : `<div class="counter"><button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button><span class="count-val">${count}</span><button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button></div>`}</div></div>`;
                 });
             }
         });
@@ -268,32 +237,42 @@
         if(!name || phone.length < 18 || !timeVal) return alert("Заполните имя, телефон и время!");
 
         const user = tg.initDataUnsafe?.user;
+        const userId = user?.id;
         const tgLink = user ? (user.username ? `@${user.username}` : `ID: ${user.id}`) : "Не определен";
+        const orderId = Math.floor(1000 + Math.random() * 9000);
+        const total = document.getElementById('total').innerText;
 
         let orderTxt = "";
-        for (let n in cart) {
-            orderTxt += `— ${n} (${cart[n]} ${products.find(x=>x.n===n).u})\n`;
-        }
+        for (let n in cart) { orderTxt += `— ${n} (${cart[n]} ${products.find(x=>x.n===n).u})\n`; }
 
-        const message = `🧾 ЗАКАЗ\n\n👤 Клиент: ${name}\n🔗 Профиль: ${tgLink}\n📞 Тел: ${phone}\n📅 Когда: ${dateVal} в ${timeVal}\n💬 Инфо: ${comment || '-'}\n\n🛒 КОРЗИНА:\n${orderTxt}\n💰 ИТОГО: ${document.getElementById('total').innerText} BYN`;
-        
+        const adminMessage = `🧾 ЗАКАЗ №${orderId}\n\n👤 Клиент: ${name}\n🔗 Профиль: ${tgLink}\n📞 Тел: ${phone}\n📅 Когда: ${dateVal} в ${timeVal}\n💬 Инфо: ${comment || '-'}\n\n🛒 КОРЗИНА:\n${orderTxt}\n💰 ИТОГО: ${total} BYN`;
+        const clientMessage = `✅ <b>Ваш заказ №${orderId} принят!</b>\n\n💰 <b>Сумма:</b> ${total} BYN\n📅 <b>Время:</b> ${dateVal} в ${timeVal}\n\nМенеджер свяжется с вами. Спасибо! 🥩`;
+
         try {
             const btn = document.querySelector('.big-btn');
             btn.innerText = 'Отправка...';
             btn.disabled = true;
 
+            // Отправка менеджеру
             await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: "-1003698576143", text: message })
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: "-1003698576143", text: adminMessage, parse_mode: "HTML" })
             });
+
+            // Отправка клиенту в личку
+            if (userId) {
+                await fetch(`https://api.telegram.org/bot8508146270:AAGZnNkbZKwlUCep5Qti5L-ES4R-C5khvT0/sendMessage`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: userId, text: clientMessage, parse_mode: "HTML" })
+                });
+            }
+
             document.getElementById('success-screen').style.display = 'flex';
             tg.HapticFeedback.notificationOccurred('success');
         } catch (e) { 
             alert("Ошибка!"); 
-            const btn = document.querySelector('.big-btn');
-            btn.innerText = 'Заказать мясо';
-            btn.disabled = false;
+            btn.disabled = false; 
+            btn.innerText = 'Заказать мясо'; 
         }
     }
 
