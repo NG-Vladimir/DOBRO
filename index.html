@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ДОБРО v3.0 — Full</title>
+    <title>ДОБРО v3.1 — Full Menu</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -48,6 +48,7 @@
     <button class="cat-btn" onclick="filterMenu('Акция')">🔥 Акции</button>
     <button class="cat-btn" onclick="filterMenu('Говядина')">Говядина</button>
     <button class="cat-btn" onclick="filterMenu('Свинина')">Свинина</button>
+    <button class="cat-btn" onclick="filterMenu('Птица')">Птица</button>
 </div>
 
 <div id="menu"></div>
@@ -89,19 +90,27 @@
         document.getElementById('name').value = tg.initDataUnsafe.user.first_name || "";
     }
 
+    // ПОЛНЫЙ СПИСОК ТОВАРОВ
     const products = [
         { n: "Рёбрышки BBQ пластинки", p: 43, u: "кг", c: "Акция", step: 0.5 },
         { n: "Половинка курочки (~1кг)", p: 24, u: "шт", c: "Акция", step: 1 },
         { n: "Говядина рваная", p: 95, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Говяжий язык", p: 90, u: "кг", c: "Говядина", step: 0.5 },
+        { n: "Говяжьи щечки", p: 105, u: "кг", c: "Говядина", step: 0.5 },
         { n: "Рваная Свинина BBQ", p: 80, u: "кг", c: "Свинина", step: 0.5 },
-        { n: "Буженина (шея)", p: 85, u: "кг", c: "Свинина", step: 0.5 }
+        { n: "Буженина (шея)", p: 85, u: "кг", c: "Свинина", step: 0.5 },
+        { n: "Рёбрышки мясные", p: 65, u: "кг", c: "Свинина", step: 0.5 },
+        { n: "Рулька томленая", p: 55, u: "шт", c: "Свинина", step: 1 },
+        { n: "Индейка бедро", p: 70, u: "кг", c: "Птица", step: 0.5 },
+        { n: "Курочка половинка", p: 24, u: "шт", c: "Птица", step: 1 },
+        { n: "Утка с яблоками", p: 75, u: "кг", c: "Птица", step: 0.5 },
+        { n: "Колбаски куриные", p: 60, u: "кг", c: "Птица", step: 0.5 }
     ];
 
     let cart = {};
     let currentCategory = "Все";
 
-    // Умная маска ввода
+    // Маски
     const applyMask = (id, len, step1) => {
         document.getElementById(id).addEventListener('input', e => {
             let v = e.target.value.replace(/\D/g, '').slice(0, len);
@@ -128,13 +137,16 @@
     function renderMenu() {
         const menu = document.getElementById('menu');
         menu.innerHTML = "";
-        const cats = currentCategory === "Все" ? ["Акция", "Говядина", "Свинина"] : [currentCategory];
+        const cats = currentCategory === "Все" ? ["Акция", "Говядина", "Свинина", "Птица"] : [currentCategory];
         cats.forEach(cat => {
-            menu.innerHTML += `<div class="section-title">${cat}</div>`;
-            products.filter(p => p.c === cat).forEach(item => {
-                const count = cart[item.n] || 0;
-                menu.innerHTML += `<div class="item"><div class="item-info"><span class="item-name">${item.n}</span><span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span></div><div>${count === 0 ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>` : `<div class="counter"><button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button><span class="count-val">${count}</span><button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button></div>`}</div></div>`;
-            });
+            const filtered = products.filter(p => p.c === cat);
+            if (filtered.length > 0) {
+                menu.innerHTML += `<div class="section-title">${cat}</div>`;
+                filtered.forEach(item => {
+                    const count = cart[item.n] || 0;
+                    menu.innerHTML += `<div class="item"><div class="item-info"><span class="item-name">${item.n}</span><span class="item-price">${item.p} BYN <span>/ ${item.u}</span></span></div><div>${count === 0 ? `<button class="btn-plus-init" onclick="updateCart('${item.n}', ${item.step})">Добавить</button>` : `<div class="counter"><button class="btn-c" onclick="updateCart('${item.n}', -${item.step})">−</button><span class="count-val">${count}</span><button class="btn-c" onclick="updateCart('${item.n}', ${item.step})">+</button></div>`}</div></div>`;
+                });
+            }
         });
         updateTotal();
     }
@@ -154,9 +166,8 @@
 
     function toggleModal(s) { document.getElementById('modal').style.display = s ? 'block' : 'none'; }
 
-    // --- ФУНКЦИЯ ПРОВЕРКИ РАБОЧЕГО ВРЕМЕНИ (ВОЗВРАЩЕНА) ---
+    // ПРОВЕРКА РАБОЧЕГО ВРЕМЕНИ
     function isWorkingTime(dateStr, timeStr) {
-        // Парсим дату ДД.ММ.ГГГГ и время ЧЧ:ММ
         const dParts = dateStr.split('.');
         const tParts = timeStr.split(':');
         if (dParts.length !== 3 || tParts.length !== 2) return { ok: false, msg: "Неверный формат даты/времени" };
@@ -164,19 +175,14 @@
         const dt = new Date(dParts[2], dParts[1] - 1, dParts[0], tParts[0], tParts[1]);
         if (isNaN(dt.getTime())) return { ok: false, msg: "Некорректная дата" };
 
-        const day = dt.getDay(); // 0 - Вс, 1 - Пн...
+        const day = dt.getDay(); 
         const hour = dt.getHours();
 
-        // 1. Воскресенье - выходной
         if (day === 0) return { ok: false, msg: "В воскресенье у нас выходной!" };
-
-        // 2. Суббота (работаем 10-17)
         if (day === 6) {
             if (hour >= 10 && hour < 17) return { ok: true };
             return { ok: false, msg: "В субботу работаем с 10:00 до 17:00" };
         }
-
-        // 3. Будние (работаем 10-18)
         if (hour >= 10 && hour < 18) return { ok: true };
         return { ok: false, msg: "В будние работаем с 10:00 до 18:00" };
     }
@@ -190,7 +196,6 @@
 
         if(!name || phone.length < 18 || date.length < 10 || time.length < 5) return alert("Заполните корректно все поля!");
 
-        // ПРОВЕРКА ВРЕМЕНИ
         const check = isWorkingTime(date, time);
         if (!check.ok) return alert("⛔️ " + check.msg + "\nПожалуйста, выберите рабочее время.");
 
